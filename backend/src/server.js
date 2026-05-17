@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const User = require('./models/User');
+const authRoutes = require('./routes/authRoutes');
 
 require('dotenv').config();
 
@@ -39,6 +40,8 @@ sequelize.sync({ alter: true })
   .then(() => {
     console.log('Database synced');
   });
+
+app.use('/api/auth', authRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
