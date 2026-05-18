@@ -11,6 +11,8 @@ import Dashboard from './Dashboard';
 
 import Register from './Register';
 
+import ProtectedRoute from './ProtectedRoute';
+
 function LoginPage() {
   const navigate = useNavigate();
 
@@ -140,10 +142,14 @@ function App() {
           element={<LoginPage />}
         />
 
-        <Route
-          path="/dashboard"
-          element={<Dashboard />}
-        />
+       <Route
+  path="/dashboard"
+  element={
+    <ProtectedRoute>
+      <Dashboard />
+    </ProtectedRoute>
+  }
+/>
 
         <Route
   path="/register"
