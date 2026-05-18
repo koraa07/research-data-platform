@@ -1,18 +1,12 @@
 import { useState } from 'react';
 
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  useNavigate
-} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import Dashboard from './Dashboard';
-
-import Register from './Register';
-
-function LoginPage() {
+function Register() {
   const navigate = useNavigate();
+
+  const [name, setName] =
+    useState('');
 
   const [email, setEmail] =
     useState('');
@@ -20,12 +14,12 @@ function LoginPage() {
   const [password, setPassword] =
     useState('');
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     try {
       const response = await fetch(
-        'http://localhost:5000/api/auth/login',
+        'http://localhost:5000/api/auth/register',
         {
           method: 'POST',
           headers: {
@@ -33,6 +27,7 @@ function LoginPage() {
               'application/json'
           },
           body: JSON.stringify({
+            name,
             email,
             password
           })
@@ -45,12 +40,9 @@ function LoginPage() {
       console.log(data);
 
       if (data.success) {
-        localStorage.setItem(
-          'token',
-          data.token
-        );
+        alert('Registration successful');
 
-        navigate('/dashboard');
+        navigate('/');
 
       } else {
         alert(data.message);
@@ -74,7 +66,7 @@ function LoginPage() {
       }}
     >
       <form
-        onSubmit={handleLogin}
+        onSubmit={handleRegister}
         style={{
           background: 'white',
           padding: '40px',
@@ -82,7 +74,23 @@ function LoginPage() {
           width: '300px'
         }}
       >
-        <h2>Login</h2>
+        <h2>Register</h2>
+
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) =>
+            setName(
+              e.target.value
+            )
+          }
+          style={{
+            width: '100%',
+            padding: '10px',
+            marginBottom: '15px'
+          }}
+        />
 
         <input
           type="email"
@@ -123,38 +131,11 @@ function LoginPage() {
             padding: '10px'
           }}
         >
-          Login
+          Register
         </button>
       </form>
     </div>
   );
 }
 
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-
-        <Route
-          path="/"
-          element={<LoginPage />}
-        />
-
-        <Route
-          path="/dashboard"
-          element={<Dashboard />}
-        />
-
-        <Route
-  path="/register"
-  element={<Register />}
-/>
-
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-
-
-export default App;
+export default Register;
