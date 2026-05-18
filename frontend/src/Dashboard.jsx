@@ -1,4 +1,14 @@
+import { useNavigate } from 'react-router-dom';
+
 function Dashboard() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+
+    navigate('/');
+  };
+
   return (
     <div
       style={{
@@ -10,6 +20,17 @@ function Dashboard() {
       <p>
         You are logged in 🔥
       </p>
+
+      <button
+        onClick={handleLogout}
+        style={{
+          padding: '10px 20px',
+          marginTop: '20px',
+          cursor: 'pointer'
+        }}
+      >
+        Logout
+      </button>
     </div>
   );
 }
