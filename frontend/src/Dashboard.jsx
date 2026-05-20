@@ -1,4 +1,7 @@
-import { useNavigate } from 'react-router-dom';
+import {
+  Link,
+  useNavigate
+} from 'react-router-dom';
 
 import {
   LineChart,
@@ -30,27 +33,91 @@ function Dashboard() {
   return (
     <div
       style={{
-        padding: '40px',
-        background: '#f5f5f5',
-        minHeight: '100vh'
+        display: 'flex',
+        minHeight: '100vh',
+        background: '#f5f5f5'
       }}
     >
+
+      {/* SIDEBAR */}
+
       <div
         style={{
-          display: 'flex',
-          justifyContent:
-            'space-between',
-          alignItems: 'center'
+          width: '250px',
+          background: '#1e293b',
+          color: 'white',
+          padding: '30px'
         }}
       >
-        <h1>
-          Research Dashboard
-        </h1>
+        <h2>
+          Research Platform
+        </h2>
+
+        <div
+          style={{
+            marginTop: '40px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px'
+          }}
+        >
+          <Link
+            to="/dashboard"
+            style={{
+              color: 'white',
+              textDecoration: 'none'
+            }}
+          >
+            Dashboard
+          </Link>
+
+          <Link
+            to="/projects"
+            style={{
+              color: 'white',
+              textDecoration: 'none'
+            }}
+          >
+            Projects
+          </Link>
+
+          <Link
+            to="/analytics"
+            style={{
+              color: 'white',
+              textDecoration: 'none'
+            }}
+          >
+            Analytics
+          </Link>
+
+          <Link
+            to="/uploads"
+            style={{
+              color: 'white',
+              textDecoration: 'none'
+            }}
+          >
+            Uploads
+          </Link>
+
+          <Link
+            to="/settings"
+            style={{
+              color: 'white',
+              textDecoration: 'none'
+            }}
+          >
+            Settings
+          </Link>
+        </div>
 
         <button
           onClick={handleLogout}
           style={{
-            padding: '10px 20px',
+            marginTop: '50px',
+            padding: '10px',
+            width: '100%',
             cursor: 'pointer'
           }}
         >
@@ -58,87 +125,100 @@ function Dashboard() {
         </button>
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          gap: '20px',
-          marginTop: '30px'
-        }}
-      >
-        <div
-          style={{
-            background: 'white',
-            padding: '20px',
-            borderRadius: '10px',
-            flex: 1
-          }}
-        >
-          <h3>Total Users</h3>
-
-          <h1>245</h1>
-        </div>
-
-        <div
-          style={{
-            background: 'white',
-            padding: '20px',
-            borderRadius: '10px',
-            flex: 1
-          }}
-        >
-          <h3>Research Projects</h3>
-
-          <h1>18</h1>
-        </div>
-
-        <div
-          style={{
-            background: 'white',
-            padding: '20px',
-            borderRadius: '10px',
-            flex: 1
-          }}
-        >
-          <h3>Uploads</h3>
-
-          <h1>120</h1>
-        </div>
-      </div>
+      {/* MAIN CONTENT */}
 
       <div
         style={{
-          background: 'white',
-          padding: '20px',
-          borderRadius: '10px',
-          marginTop: '40px',
-          height: '400px'
+          flex: 1,
+          padding: '40px'
         }}
       >
-        <h2>
-          User Analytics
-        </h2>
+        <h1>
+          Dashboard
+        </h1>
 
-        <ResponsiveContainer
-          width="100%"
-          height="90%"
+        <div
+          style={{
+            display: 'flex',
+            gap: '20px',
+            marginTop: '30px'
+          }}
         >
-          <LineChart data={data}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-            />
+          <div
+            style={{
+              background: 'white',
+              padding: '20px',
+              borderRadius: '10px',
+              flex: 1
+            }}
+          >
+            <h3>Total Users</h3>
 
-            <XAxis dataKey="month" />
+            <h1>245</h1>
+          </div>
 
-            <YAxis />
+          <div
+            style={{
+              background: 'white',
+              padding: '20px',
+              borderRadius: '10px',
+              flex: 1
+            }}
+          >
+            <h3>Projects</h3>
 
-            <Tooltip />
+            <h1>18</h1>
+          </div>
 
-            <Line
-              type="monotone"
-              dataKey="users"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+          <div
+            style={{
+              background: 'white',
+              padding: '20px',
+              borderRadius: '10px',
+              flex: 1
+            }}
+          >
+            <h3>Uploads</h3>
+
+            <h1>120</h1>
+          </div>
+        </div>
+
+        <div
+          style={{
+            background: 'white',
+            padding: '20px',
+            borderRadius: '10px',
+            marginTop: '40px',
+            height: '400px'
+          }}
+        >
+          <h2>
+            User Analytics
+          </h2>
+
+          <ResponsiveContainer
+            width="100%"
+            height="90%"
+          >
+            <LineChart data={data}>
+              <CartesianGrid
+                strokeDasharray="3 3"
+              />
+
+              <XAxis dataKey="month" />
+
+              <YAxis />
+
+              <Tooltip />
+
+              <Line
+                type="monotone"
+                dataKey="users"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
