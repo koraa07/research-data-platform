@@ -5,7 +5,10 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const User = require('./models/User');
+const Dataset = require('./models/Dataset');
 const authRoutes = require('./routes/authRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
+const datasetRoutes = require('./routes/datasetRoutes');
 
 require('dotenv').config();
 
@@ -42,6 +45,10 @@ sequelize.sync({ alter: true })
   });
 
 app.use('/api/auth', authRoutes);
+
+app.use('/api/uploads', uploadRoutes);
+
+app.use('/api/datasets', datasetRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

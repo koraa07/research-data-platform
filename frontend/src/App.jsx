@@ -15,6 +15,10 @@ import ProtectedRoute from './ProtectedRoute';
 
 import Projects from './Projects';
 
+import Uploads from './Uploads';
+
+import Datasets from './Datasets';
+
 function LoginPage() {
   const navigate = useNavigate();
 
@@ -163,6 +167,24 @@ function App() {
   element={
     <ProtectedRoute>
       <Projects />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/uploads"
+  element={
+    <ProtectedRoute>
+      <Uploads />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/datasets"
+  element={
+    <ProtectedRoute>
+      <Datasets />
     </ProtectedRoute>
   }
 />

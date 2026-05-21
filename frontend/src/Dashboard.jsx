@@ -110,6 +110,17 @@ function Dashboard() {
           >
             Settings
           </Link>
+          
+          <Link
+  to="/datasets"
+  style={{
+    color: 'white',
+    textDecoration: 'none'
+  }}
+>
+  Datasets
+</Link>
+
         </div>
 
         <button
