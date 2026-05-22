@@ -1,235 +1,232 @@
 import {
-  Link,
-  useNavigate
-} from 'react-router-dom';
+  useEffect,
+  useState
+} from 'react';
+
+import axios from 'axios';
 
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer
 } from 'recharts';
 
 function Dashboard() {
-  const navigate = useNavigate();
 
-  const data = [
-    { month: 'Jan', users: 30 },
-    { month: 'Feb', users: 45 },
-    { month: 'Mar', users: 60 },
-    { month: 'Apr', users: 40 },
-    { month: 'May', users: 90 }
+  const [stats, setStats] =
+    useState(null);
+
+  useEffect(() => {
+
+    fetchStats();
+
+  }, []);
+
+  const fetchStats =
+    async () => {
+
+      try {
+
+        const response =
+          await axios.get(
+            'http://localhost:5000/api/dashboard/stats'
+          );
+
+        setStats(
+          response.data.stats
+        );
+
+      } catch (error) {
+
+        console.error(error);
+      }
+    };
+
+  if (!stats) {
+
+    return <h1>Loading...</h1>;
+  }
+
+  const chartData = [
+
+    {
+      name: 'Datasets',
+
+      value:
+        stats.totalDatasets
+    },
+
+    {
+      name: 'Users',
+
+      value:
+        stats.totalUsers
+    },
+
+    {
+      name: 'Categories',
+
+      value:
+        stats.totalCategories
+    }
   ];
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-
-    navigate('/');
-  };
 
   return (
     <div
       style={{
-        display: 'flex',
-        minHeight: '100vh',
-        background: '#f5f5f5'
+        padding: '40px',
+
+        background: '#f5f7fb',
+
+        minHeight: '100vh'
       }}
     >
-
-      {/* SIDEBAR */}
-
-      <div
-        style={{
-          width: '250px',
-          background: '#1e293b',
-          color: 'white',
-          padding: '30px'
-        }}
-      >
-        <h2>
-          Research Platform
-        </h2>
-
-        <div
-          style={{
-            marginTop: '40px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px'
-          }}
-        >
-          <Link
-            to="/dashboard"
-            style={{
-              color: 'white',
-              textDecoration: 'none'
-            }}
-          >
-            Dashboard
-          </Link>
-
-          <Link
-            to="/projects"
-            style={{
-              color: 'white',
-              textDecoration: 'none'
-            }}
-          >
-            Projects
-          </Link>
-
-          <Link
-            to="/analytics"
-            style={{
-              color: 'white',
-              textDecoration: 'none'
-            }}
-          >
-            Analytics
-          </Link>
-
-          <Link
-            to="/uploads"
-            style={{
-              color: 'white',
-              textDecoration: 'none'
-            }}
-          >
-            Uploads
-          </Link>
-
-          <Link
-            to="/settings"
-            style={{
-              color: 'white',
-              textDecoration: 'none'
-            }}
-          >
-            Settings
-          </Link>
-          
-          <Link
-  to="/datasets"
-  style={{
-    color: 'white',
-    textDecoration: 'none'
-  }}
->
-  Datasets
-</Link>
-
-        </div>
-
-        <button
-          onClick={handleLogout}
-          style={{
-            marginTop: '50px',
-            padding: '10px',
-            width: '100%',
-            cursor: 'pointer'
-          }}
-        >
-          Logout
-        </button>
-      </div>
-
-      {/* MAIN CONTENT */}
+      <h1>
+        Analytics Dashboard
+      </h1>
 
       <div
         style={{
-          flex: 1,
-          padding: '40px'
+          display: 'grid',
+
+          gridTemplateColumns:
+            'repeat(auto-fit, minmax(250px, 1fr))',
+
+          gap: '20px',
+
+          marginTop: '30px'
         }}
       >
-        <h1>
-          Dashboard
-        </h1>
-
         <div
           style={{
-            display: 'flex',
-            gap: '20px',
-            marginTop: '30px'
+            background: 'white',
+
+            padding: '25px',
+
+            borderRadius: '12px'
           }}
         >
-          <div
-            style={{
-              background: 'white',
-              padding: '20px',
-              borderRadius: '10px',
-              flex: 1
-            }}
-          >
-            <h3>Total Users</h3>
+          <h2>
+            Total Datasets
+          </h2>
 
-            <h1>245</h1>
-          </div>
-
-          <div
-            style={{
-              background: 'white',
-              padding: '20px',
-              borderRadius: '10px',
-              flex: 1
-            }}
-          >
-            <h3>Projects</h3>
-
-            <h1>18</h1>
-          </div>
-
-          <div
-            style={{
-              background: 'white',
-              padding: '20px',
-              borderRadius: '10px',
-              flex: 1
-            }}
-          >
-            <h3>Uploads</h3>
-
-            <h1>120</h1>
-          </div>
+          <h1>
+            {stats.totalDatasets}
+          </h1>
         </div>
 
         <div
           style={{
             background: 'white',
-            padding: '20px',
-            borderRadius: '10px',
-            marginTop: '40px',
-            height: '400px'
+
+            padding: '25px',
+
+            borderRadius: '12px'
           }}
         >
           <h2>
-            User Analytics
+            Total Users
           </h2>
 
-          <ResponsiveContainer
-            width="100%"
-            height="90%"
-          >
-            <LineChart data={data}>
-              <CartesianGrid
-                strokeDasharray="3 3"
-              />
-
-              <XAxis dataKey="month" />
-
-              <YAxis />
-
-              <Tooltip />
-
-              <Line
-                type="monotone"
-                dataKey="users"
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <h1>
+            {stats.totalUsers}
+          </h1>
         </div>
+
+        <div
+          style={{
+            background: 'white',
+
+            padding: '25px',
+
+            borderRadius: '12px'
+          }}
+        >
+          <h2>
+            Categories
+          </h2>
+
+          <h1>
+            {stats.totalCategories}
+          </h1>
+        </div>
+      </div>
+
+      <div
+        style={{
+          background: 'white',
+
+          marginTop: '40px',
+
+          padding: '30px',
+
+          borderRadius: '12px',
+
+          height: '400px'
+        }}
+      >
+        <h2>
+          Platform Statistics
+        </h2>
+
+        <ResponsiveContainer
+          width="100%"
+          height={300}
+        >
+          <BarChart
+            data={chartData}
+          >
+            <XAxis dataKey="name" />
+
+            <YAxis />
+
+            <Tooltip />
+
+            <Bar dataKey="value" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div
+        style={{
+          background: 'white',
+
+          marginTop: '40px',
+
+          padding: '30px',
+
+          borderRadius: '12px'
+        }}
+      >
+        <h2>
+          Recent Uploads
+        </h2>
+
+        {stats.recentDatasets.map(
+          (dataset) => (
+
+          <div
+            key={dataset.id}
+
+            style={{
+              padding: '15px 0',
+
+              borderBottom:
+                '1px solid #eee'
+            }}
+          >
+            <h3>
+              {dataset.title}
+            </h3>
+
+            <p>
+              {dataset.category}
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );

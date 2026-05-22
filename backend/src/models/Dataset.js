@@ -20,7 +20,12 @@ const Dataset = sequelize.define(
 
     filename: {
       type: DataTypes.STRING
-    }
+    },
+
+    userId: {
+  type: DataTypes.UUID,
+  allowNull: true
+}
   }
 );
 

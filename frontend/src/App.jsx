@@ -7,20 +7,43 @@ import {
   useNavigate
 } from 'react-router-dom';
 
-import Dashboard from './Dashboard';
+import { Toaster }
+  from 'react-hot-toast';
 
-import Register from './Register';
+import Dashboard
+  from './Dashboard';
 
-import ProtectedRoute from './ProtectedRoute';
+import Register
+  from './Register';
 
-import Projects from './Projects';
+import ProtectedRoute
+  from './ProtectedRoute';
 
-import Uploads from './Uploads';
+import Projects
+  from './Projects';
 
-import Datasets from './Datasets';
+import Uploads
+  from './Uploads';
+
+import Datasets
+  from './Datasets';
+
+import DatasetDetails
+  from './DatasetDetails';
+
+import MyDatasets
+  from './MyDatasets';
+
+import Layout
+  from './Layout';
+
+import Settings
+  from './Settings';
 
 function LoginPage() {
-  const navigate = useNavigate();
+
+  const navigate =
+    useNavigate();
 
   const [email, setEmail] =
     useState('');
@@ -28,106 +51,164 @@ function LoginPage() {
   const [password, setPassword] =
     useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin =
+    async (e) => {
 
-    try {
-      const response = await fetch(
-        'http://localhost:5000/api/auth/login',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type':
-              'application/json'
-          },
-          body: JSON.stringify({
-            email,
-            password
-          })
+      e.preventDefault();
+
+      try {
+
+        const response =
+          await fetch(
+
+            'http://localhost:5000/api/auth/login',
+
+            {
+              method: 'POST',
+
+              headers: {
+                'Content-Type':
+                  'application/json'
+              },
+
+              body: JSON.stringify({
+
+                email,
+
+                password
+              })
+            }
+          );
+
+        const data =
+          await response.json();
+
+        console.log(data);
+
+        if (data.success) {
+
+          localStorage.setItem(
+            'token',
+            data.token
+          );
+
+          localStorage.setItem(
+
+            'user',
+
+            JSON.stringify(
+              data.user
+            )
+          );
+
+          navigate(
+            '/dashboard'
+          );
+
+        } else {
+
+          alert(
+            data.message
+          );
         }
-      );
 
-      const data =
-        await response.json();
+      } catch (error) {
 
-      console.log(data);
+        console.error(error);
 
-      if (data.success) {
-        localStorage.setItem(
-          'token',
-          data.token
+        alert(
+          'Server error'
         );
-
-        navigate('/dashboard');
-
-      } else {
-        alert(data.message);
       }
-
-    } catch (error) {
-      console.error(error);
-
-      alert('Server error');
-    }
-  };
+    };
 
   return (
     <div
       style={{
         display: 'flex',
+
         justifyContent: 'center',
+
         alignItems: 'center',
+
         height: '100vh',
+
         background: '#f5f5f5'
       }}
     >
       <form
-        onSubmit={handleLogin}
+
+        onSubmit={
+          handleLogin
+        }
+
         style={{
           background: 'white',
+
           padding: '40px',
+
           borderRadius: '10px',
+
           width: '300px'
         }}
       >
-        <h2>Login</h2>
+        <h2>
+          Login
+        </h2>
 
         <input
+
           type="email"
+
           placeholder="Email"
+
           value={email}
+
           onChange={(e) =>
             setEmail(
               e.target.value
             )
           }
+
           style={{
             width: '100%',
+
             padding: '10px',
+
             marginBottom: '15px'
           }}
         />
 
         <input
+
           type="password"
+
           placeholder="Password"
+
           value={password}
+
           onChange={(e) =>
             setPassword(
               e.target.value
             )
           }
+
           style={{
             width: '100%',
+
             padding: '10px',
+
             marginBottom: '15px'
           }}
         />
 
         <button
+
           type="submit"
+
           style={{
             width: '100%',
+
             padding: '10px'
           }}
         >
@@ -139,61 +220,103 @@ function LoginPage() {
 }
 
 function App() {
+
   return (
     <BrowserRouter>
+
       <Routes>
 
         <Route
           path="/"
-          element={<LoginPage />}
+
+          element={
+            <LoginPage />
+          }
         />
 
-       <Route
-  path="/dashboard"
-  element={
-    <ProtectedRoute>
-      <Dashboard />
-    </ProtectedRoute>
-  }
-/>
+        <Route
+          path="/register"
+
+          element={
+            <Register />
+          }
+        />
 
         <Route
-  path="/register"
-  element={<Register />}
-/>
 
-<Route
-  path="/projects"
-  element={
-    <ProtectedRoute>
-      <Projects />
-    </ProtectedRoute>
-  }
-/>
+          element={
 
-<Route
-  path="/uploads"
-  element={
-    <ProtectedRoute>
-      <Uploads />
-    </ProtectedRoute>
-  }
-/>
+            <ProtectedRoute>
 
-<Route
-  path="/datasets"
-  element={
-    <ProtectedRoute>
-      <Datasets />
-    </ProtectedRoute>
-  }
-/>
+              <Layout />
+
+            </ProtectedRoute>
+          }
+        >
+          <Route
+            path="/dashboard"
+
+            element={
+              <Dashboard />
+            }
+          />
+
+          <Route
+            path="/datasets"
+
+            element={
+              <Datasets />
+            }
+          />
+
+          <Route
+            path="/my-datasets"
+
+            element={
+              <MyDatasets />
+            }
+          />
+
+          <Route
+            path="/uploads"
+
+            element={
+              <Uploads />
+            }
+          />
+
+          <Route
+            path="/projects"
+
+            element={
+              <Projects />
+            }
+          />
+
+          <Route
+            path="/settings"
+
+            element={
+              <Settings />
+            }
+          />
+
+          <Route
+            path="/datasets/:id"
+
+            element={
+              <DatasetDetails />
+            }
+          />
+
+        </Route>
 
       </Routes>
+
+      <Toaster />
+
     </BrowserRouter>
   );
 }
-
-
 
 export default App;

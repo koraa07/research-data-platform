@@ -31,6 +31,16 @@ function Uploads() {
 
     formData.append('category', category);
 
+    const user =
+  JSON.parse(
+    localStorage.getItem('user')
+  );
+
+formData.append(
+  'userId',
+  user.id
+);
+
     try {
       const response = await axios.post(
         'http://localhost:5000/api/uploads',

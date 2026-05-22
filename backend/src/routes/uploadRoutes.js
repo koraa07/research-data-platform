@@ -36,7 +36,9 @@ router.post(
 
         category: req.body.category,
 
-        filename: req.file.filename
+        filename: req.file.filename,
+
+        userId: req.body.userId
       });
 
       res.json({
