@@ -40,6 +40,13 @@ import Layout
 import Settings
   from './Settings';
 
+import ProjectDetails
+  from './ProjectDetails';
+
+import Users from './Users';
+
+import UserProfile from './UserProfile';
+
 function LoginPage() {
 
   const navigate =
@@ -309,7 +316,26 @@ function App() {
             }
           />
 
+          <Route
+            path="/projects/:id"
+            element={
+              <ProtectedRoute>
+                <ProjectDetails />
+              </ProtectedRoute>
+            }
+          />
+
         </Route>
+
+        <Route
+  path="/users"
+  element={<Users />}
+/>
+
+<Route
+  path="/profile/:userId"
+  element={<UserProfile />}
+/>
 
       </Routes>
 

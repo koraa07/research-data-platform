@@ -111,6 +111,10 @@ function Layout() {
 >
   Settings
 </Link>
+
+<Link to="/users">
+  Users
+</Link>
         </div>
       </div>
 

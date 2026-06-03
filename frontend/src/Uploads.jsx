@@ -1,62 +1,158 @@
-import { useState } from 'react';
+import {
+  useState,
+  useEffect
+} from 'react';
+
 import axios from 'axios';
 
+
 function Uploads() {
-  const [file, setFile] = useState(null);
 
-  const [title, setTitle] = useState('');
+  const [file, setFile] =
+    useState(null);
 
-  const [description, setDescription] =
+  const [title, setTitle] =
     useState('');
 
-  const [category, setCategory] =
-    useState('');
+  const [description,
+    setDescription] =
+      useState('');
 
-  const handleUpload = async () => {
-    if (!file) {
-      alert('Select file first');
-      return;
-    }
+  const [category,
+    setCategory] =
+      useState('');
 
-    const formData = new FormData();
+  const [projects,
+    setProjects] =
+      useState([]);
 
-    formData.append('file', file);
+  const [projectId,
+    setProjectId] =
+      useState('');
 
-    formData.append('title', title);
+  useEffect(() => {
 
-    formData.append(
-      'description',
-      description
-    );
+    fetchProjects();
 
-    formData.append('category', category);
+  }, []);
 
-    const user =
-  JSON.parse(
-    localStorage.getItem('user')
-  );
+  const fetchProjects =
+    async () => {
 
-formData.append(
-  'userId',
-  user.id
-);
+      try {
 
-    try {
-      const response = await axios.post(
-        'http://localhost:5000/api/uploads',
-        formData
+        const user =
+          JSON.parse(
+            localStorage.getItem(
+              'user'
+            )
+          );
+
+        const response =
+          await axios.get(
+
+            `http://localhost:5000/api/projects/user/${user.id}`
+          );
+
+        setProjects(
+          response.data.projects
+        );
+
+      } catch (error) {
+
+        console.error(error);
+      }
+    };
+
+  const handleUpload =
+    async () => {
+
+      if (!file) {
+
+        alert(
+          'Select file first'
+        );
+
+        return;
+      }
+
+      const formData =
+        new FormData();
+
+      formData.append(
+        'file',
+        file
       );
 
-      console.log(response.data);
+      formData.append(
+        'title',
+        title
+      );
 
-      alert('Dataset uploaded');
+      formData.append(
+        'description',
+        description
+      );
 
-    } catch (error) {
-      console.error(error);
+      formData.append(
+        'category',
+        category
+      );
 
-      alert('Upload failed');
-    }
-  };
+      const user =
+        JSON.parse(
+          localStorage.getItem(
+            'user'
+          )
+        );
+
+      formData.append(
+        'userId',
+        user.id
+      );
+
+      formData.append(
+        'projectId',
+        projectId
+      );
+
+      try {
+
+        const response =
+          await axios.post(
+
+            'http://localhost:5000/api/uploads',
+
+            formData
+          );
+
+        console.log(
+          response.data
+        );
+
+        alert(
+          'Dataset uploaded'
+        );
+
+        setTitle('');
+
+        setDescription('');
+
+        setCategory('');
+
+        setProjectId('');
+
+        setFile(null);
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          'Upload failed'
+        );
+      }
+    };
 
   return (
     <div
@@ -71,50 +167,118 @@ formData.append(
       <div
         style={{
           marginTop: '30px',
+
           display: 'flex',
-          flexDirection: 'column',
+
+          flexDirection:
+            'column',
+
           gap: '15px',
-          maxWidth: '400px'
+
+          maxWidth:
+            '400px'
         }}
       >
         <input
+
           type="text"
+
           placeholder="Dataset title"
+
           value={title}
+
           onChange={(e) =>
-            setTitle(e.target.value)
+            setTitle(
+              e.target.value
+            )
           }
         />
 
         <textarea
+
           placeholder="Description"
+
           value={description}
+
           onChange={(e) =>
-            setDescription(e.target.value)
+            setDescription(
+              e.target.value
+            )
           }
         />
 
         <input
+
           type="text"
+
           placeholder="Category"
+
           value={category}
+
           onChange={(e) =>
-            setCategory(e.target.value)
+            setCategory(
+              e.target.value
+            )
           }
         />
 
-        <input
-          type="file"
+        <select
+
+          value={projectId}
+
           onChange={(e) =>
-            setFile(e.target.files[0])
+            setProjectId(
+              e.target.value
+            )
+          }
+
+          style={{
+            padding: '10px'
+          }}
+        >
+          <option value="">
+            No Project
+          </option>
+
+          {projects.map(
+            (project) => (
+
+              <option
+
+                key={project.id}
+
+                value={
+                  project.id
+                }
+              >
+                {project.title}
+              </option>
+            )
+          )}
+        </select>
+
+        <input
+
+          type="file"
+
+          onChange={(e) =>
+            setFile(
+              e.target.files[0]
+            )
           }
         />
 
         <button
-          onClick={handleUpload}
+
+          onClick={
+            handleUpload
+          }
+
           style={{
             padding: '10px',
-            cursor: 'pointer'
+
+            cursor:
+              'pointer'
           }}
         >
           Upload Dataset

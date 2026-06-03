@@ -22,6 +22,16 @@ const Dataset = sequelize.define(
       type: DataTypes.STRING
     },
 
+    likes: {
+  type: DataTypes.INTEGER,
+  defaultValue: 0
+},
+
+        projectId: {
+  type:
+    DataTypes.UUID,
+  allowNull: true
+},
     userId: {
   type: DataTypes.UUID,
   allowNull: true

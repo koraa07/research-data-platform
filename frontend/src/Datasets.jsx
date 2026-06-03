@@ -11,14 +11,17 @@ import axios from 'axios';
 
 function Datasets() {
 
-  const [datasets, setDatasets] =
-    useState([]);
+  const [datasets,
+    setDatasets] =
+      useState([]);
 
-  const [search, setSearch] =
-    useState('');
+  const [search,
+    setSearch] =
+      useState('');
 
-  const [category, setCategory] =
-    useState('');
+  const [category,
+    setCategory] =
+      useState('');
 
   useEffect(() => {
 
@@ -26,48 +29,53 @@ function Datasets() {
 
   }, []);
 
-  const fetchDatasets = async () => {
+  const fetchDatasets =
+    async () => {
 
-    try {
+      try {
 
-      const response = await axios.get(
-        'http://localhost:5000/api/datasets'
-      );
-
-      setDatasets(
-        response.data.datasets
-      );
-
-    } catch (error) {
-
-      console.error(error);
-    }
-  };
-
-  const filteredDatasets =
-    datasets.filter((dataset) => {
-
-      const matchesSearch =
-        dataset.title
-          .toLowerCase()
-          .includes(
-            search.toLowerCase()
+        const response =
+          await axios.get(
+            'http://localhost:5000/api/datasets'
           );
 
-      const matchesCategory =
-        category === '' ||
-        dataset.category === category;
+        setDatasets(
+          response.data.datasets
+        );
 
-      return (
-        matchesSearch &&
-        matchesCategory
-      );
-    });
+      } catch (error) {
+
+        console.error(error);
+      }
+    };
+
+  const filteredDatasets =
+    datasets.filter(
+      (dataset) => {
+
+        const matchesSearch =
+          dataset.title
+            .toLowerCase()
+            .includes(
+              search.toLowerCase()
+            );
+
+        const matchesCategory =
+          category === '' ||
+          dataset.category === category;
+
+        return (
+          matchesSearch &&
+          matchesCategory
+        );
+      }
+    );
 
   const categories =
     [...new Set(
       datasets.map(
-        (d) => d.category
+        (dataset) =>
+          dataset.category
       )
     )];
 
@@ -81,17 +89,19 @@ function Datasets() {
         Research Datasets
       </h1>
 
-      {/* SEARCH + FILTER */}
-
       <div
         style={{
           display: 'flex',
+
           gap: '20px',
+
           marginTop: '20px',
+
           marginBottom: '30px'
         }}
       >
         <input
+
           type="text"
 
           placeholder="Search datasets..."
@@ -99,20 +109,26 @@ function Datasets() {
           value={search}
 
           onChange={(e) =>
-            setSearch(e.target.value)
+            setSearch(
+              e.target.value
+            )
           }
 
           style={{
             padding: '10px',
+
             width: '300px'
           }}
         />
 
         <select
+
           value={category}
 
           onChange={(e) =>
-            setCategory(e.target.value)
+            setCategory(
+              e.target.value
+            )
           }
 
           style={{
@@ -123,18 +139,21 @@ function Datasets() {
             All Categories
           </option>
 
-          {categories.map((cat) => (
-            <option
-              key={cat}
-              value={cat}
-            >
-              {cat}
-            </option>
-          ))}
+          {categories.map(
+            (cat) => (
+
+              <option
+
+                key={cat}
+
+                value={cat}
+              >
+                {cat}
+              </option>
+            )
+          )}
         </select>
       </div>
-
-      {/* DATASET CARDS */}
 
       <div
         style={{
@@ -149,59 +168,73 @@ function Datasets() {
         {filteredDatasets.map(
           (dataset) => (
 
-          <Link
-  to={`/datasets/${dataset.id}`}
+            <Link
 
-  style={{
-    textDecoration: 'none',
-    color: 'inherit'
-  }}
->
-  <div
-    key={dataset.id}
+              key={dataset.id}
 
-    style={{
-      background: 'white',
-      padding: '20px',
-      borderRadius: '10px',
-      boxShadow:
-        '0 2px 8px rgba(0,0,0,0.1)'
-    }}
-  >
+              to={`/datasets/${dataset.id}`}
 
-            <h2>
-              {dataset.title}
-            </h2>
+              style={{
+                textDecoration:
+                  'none',
 
-            <p>
-              {dataset.description}
-            </p>
+                color:
+                  'inherit'
+              }}
+            >
+              <div
+                style={{
+                  background:
+                    'white',
 
-            <p>
-              <strong>
-                Category:
-              </strong>
+                  padding:
+                    '20px',
 
-              {' '}
+                  borderRadius:
+                    '10px',
 
-              {dataset.category}
-            </p>
+                  boxShadow:
+                    '0 2px 8px rgba(0,0,0,0.1)'
+                }}
+              >
+                <h2
+                  style={{
+                    color:
+                      '#2563eb'
+                  }}
+                >
+                  {dataset.title}
+                </h2>
 
-            <p>
-              <strong>
-                File:
-              </strong>
+                <p>
+                  {dataset.description}
+                </p>
 
-              {' '}
+                <p>
+                  <strong>
+                    Category:
+                  </strong>
 
-              {dataset.filename}
-            </p>
-          </div>
-    </Link>
-        ))}
+                  {' '}
+
+                  {dataset.category}
+                </p>
+
+                <p>
+                  <strong>
+                    File:
+                  </strong>
+
+                  {' '}
+
+                  {dataset.filename}
+                </p>
+              </div>
+            </Link>
+          )
+        )}
       </div>
     </div>
-    
   );
 }
 

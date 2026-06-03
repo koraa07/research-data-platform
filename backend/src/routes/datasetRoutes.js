@@ -76,6 +76,44 @@ router.get(
 );
 
 router.get(
+  '/project/:projectId',
+
+  async (req, res) => {
+
+    try {
+
+      const datasets =
+        await Dataset.findAll({
+
+          where: {
+            projectId:
+              req.params.projectId
+          },
+
+          order: [
+            ['createdAt', 'DESC']
+          ]
+        });
+
+      res.json({
+
+        success: true,
+
+        datasets
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        success: false
+      });
+    }
+  }
+);
+
+router.get(
   '/:id',
 
   async (req, res) => {
@@ -200,6 +238,50 @@ router.delete(
 
         message:
           'Dataset deleted'
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        success: false
+      });
+    }
+  }
+);
+
+router.put(
+  '/like/:id',
+
+  async (req, res) => {
+
+    try {
+
+      const dataset =
+        await Dataset.findByPk(
+          req.params.id
+        );
+
+      if (!dataset) {
+
+        return res.status(404).json({
+          success: false
+        });
+      }
+
+      await dataset.update({
+
+        likes:
+          dataset.likes + 1
+      });
+
+      res.json({
+
+        success: true,
+
+        likes:
+          dataset.likes
       });
 
     } catch (error) {

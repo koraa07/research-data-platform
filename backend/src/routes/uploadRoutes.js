@@ -29,16 +29,24 @@ router.post(
     try {
 
       const dataset = await Dataset.create({
-        title: req.body.title,
+
+        title:
+          req.body.title,
 
         description:
           req.body.description,
 
-        category: req.body.category,
+        category:
+          req.body.category,
 
-        filename: req.file.filename,
+        filename:
+          req.file.filename,
 
-        userId: req.body.userId
+        userId:
+          req.body.userId,
+
+        projectId:
+          req.body.projectId || null
       });
 
       res.json({

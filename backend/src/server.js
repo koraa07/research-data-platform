@@ -34,6 +34,18 @@ const datasetRoutes =
   const settingsRoutes =
   require('./routes/settingsRoutes');
 
+  const Project =
+  require('./models/Project');
+
+const projectRoutes =
+  require('./routes/projectRoutes');
+
+  const commentRoutes =
+  require('./routes/commentRoutes');
+
+  const userRoutes =
+  require('./routes/userRoutes');
+
 console.log(
   'DATASET ROUTES LOADED'
 );
@@ -91,6 +103,21 @@ app.use(
 app.use(
   '/api/settings',
   settingsRoutes
+);
+
+app.use(
+  '/api/projects',
+  projectRoutes
+);
+
+app.use(
+  '/api/comments',
+  commentRoutes
+);
+
+app.use(
+  '/api/users',
+  userRoutes
 );
 
 const PORT =
