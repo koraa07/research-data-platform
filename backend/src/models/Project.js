@@ -4,24 +4,21 @@ const { DataTypes } =
 const sequelize =
   require('../config/database');
 
-const Comment =
+const Project =
   sequelize.define(
-    'Comment',
+    'Project',
     {
-      text: {
-        type:
-          DataTypes.TEXT,
-
-        allowNull:
-          false
-      },
-
-      userName: {
+      title: {
         type:
           DataTypes.STRING,
 
         allowNull:
           false
+      },
+
+      description: {
+        type:
+          DataTypes.TEXT
       },
 
       userId: {
@@ -30,17 +27,9 @@ const Comment =
 
         allowNull:
           false
-      },
-
-      datasetId: {
-        type:
-          DataTypes.INTEGER,
-
-        allowNull:
-          false
       }
     }
   );
 
 module.exports =
-  Comment;
+  Project;
