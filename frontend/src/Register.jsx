@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function Register() {
   const navigate = useNavigate();
 
-  const [name, setName] =
+  const [username, setUsername] =
     useState('');
 
   const [email, setEmail] =
@@ -14,8 +14,30 @@ function Register() {
   const [password, setPassword] =
     useState('');
 
+  const [error, setError] =
+    useState('');
+
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    if (!username.trim()) {
+      setError('Username is required');
+      return;
+    }
+
+    if (!email.trim()) {
+      setError('Email is required');
+      return;
+    }
+
+    const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+    if (!passwordRequirements.test(password)) {
+      setError(
+        'Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol'
+      );
+      return;
+    }
 
     try {
       const response = await fetch(
@@ -27,7 +49,7 @@ function Register() {
               'application/json'
           },
           body: JSON.stringify({
-            name,
+            name: username,
             email,
             password
           })
@@ -42,10 +64,10 @@ function Register() {
       if (data.success) {
         alert('Registration successful');
 
-        navigate('/');
+        navigate('/login');
 
       } else {
-        alert(data.message);
+        setError(data.message);
       }
 
     } catch (error) {
@@ -56,81 +78,54 @@ function Register() {
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        background: '#f5f5f5'
-      }}
-    >
-      <form
-        onSubmit={handleRegister}
-        style={{
-          background: 'white',
-          padding: '40px',
-          borderRadius: '10px',
-          width: '300px'
-        }}
-      >
+    <div className="auth-shell">
+      <form onSubmit={handleRegister} className="auth-panel">
+
         <h2>Register</h2>
 
         <input
           type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) =>
-            setName(
-              e.target.value
-            )
-          }
-          style={{
-            width: '100%',
-            padding: '10px',
-            marginBottom: '15px'
+          placeholder="Username"
+          value={username}
+          onChange={(e) => {
+            setUsername(e.target.value);
+            setError('');
           }}
+          className="input-field"
+          style={{ marginBottom: '15px' }}
         />
 
         <input
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) =>
-            setEmail(
-              e.target.value
-            )
-          }
-          style={{
-            width: '100%',
-            padding: '10px',
-            marginBottom: '15px'
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setError('');
           }}
+          className="input-field"
+          style={{ marginBottom: '15px' }}
         />
 
         <input
           type="password"
           placeholder="Password"
           value={password}
-          onChange={(e) =>
-            setPassword(
-              e.target.value
-            )
-          }
-          style={{
-            width: '100%',
-            padding: '10px',
-            marginBottom: '15px'
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setError('');
           }}
+          className="input-field"
+          style={{ marginBottom: '15px' }}
         />
 
-        <button
-          type="submit"
-          style={{
-            width: '100%',
-            padding: '10px'
-          }}
-        >
+        {error && (
+          <div style={{ color: '#E65F2B', marginBottom: '15px' }}>
+            {error}
+          </div>
+        )}
+
+        <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
           Register
         </button>
       </form>

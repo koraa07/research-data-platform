@@ -2,7 +2,14 @@ const bcrypt = require('bcryptjs');
 
 const jwt = require('jsonwebtoken');
 
+const { Op } = require('sequelize');
+
 const User = require('../models/User');
+
+const isStrongPassword = (password) => {
+  const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+  return strongPasswordRegex.test(password);
+};
 
 const register = async (req, res) => {
 
@@ -14,16 +21,56 @@ const register = async (req, res) => {
       password
     } = req.body;
 
-    const existingUser =
+    if (!name || !name.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Username is required'
+      });
+    }
+
+    if (!email || !email.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required'
+      });
+    }
+
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password is required'
+      });
+    }
+
+    const existingEmail =
       await User.findOne({
         where: { email }
       });
 
-    if (existingUser) {
-
+    if (existingEmail) {
       return res.status(400).json({
         success: false,
-        message: 'User already exists'
+        message: 'Email already registered'
+      });
+    }
+
+    const existingName =
+      await User.findOne({
+        where: { name }
+      });
+
+    if (existingName) {
+      return res.status(400).json({
+        success: false,
+        message: 'Username is already taken'
+      });
+    }
+
+    if (!password || !isStrongPassword(password)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          'Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol'
       });
     }
 
@@ -93,7 +140,12 @@ const login = async (req, res) => {
 
     const user =
       await User.findOne({
-        where: { email }
+        where: {
+          [Op.or]: [
+            { email },
+            { name: email }
+          ]
+        }
       });
 
     if (!user) {

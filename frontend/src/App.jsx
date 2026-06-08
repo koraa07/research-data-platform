@@ -28,6 +28,15 @@ import Uploads
 import Datasets
   from './Datasets';
 
+import Favorites
+  from './Favorites';
+
+import Forum
+  from './Forum';
+
+import ForumThread
+  from './ForumThread';
+
 import DatasetDetails
   from './DatasetDetails';
 
@@ -36,6 +45,7 @@ import MyDatasets
 
 import Layout
   from './Layout';
+import { LanguageProvider } from './LanguageContext';
 
 import Settings
   from './Settings';
@@ -47,15 +57,25 @@ import Users from './Users';
 
 import UserProfile from './UserProfile';
 
+import Profile from './Profile';
+
+
+
+import LandingPage
+  from './LandingPage';
+
 function LoginPage() {
 
   const navigate =
     useNavigate();
 
-  const [email, setEmail] =
+  const [identifier, setIdentifier] =
     useState('');
 
   const [password, setPassword] =
+    useState('');
+
+  const [error, setError] =
     useState('');
 
   const handleLogin =
@@ -80,7 +100,7 @@ function LoginPage() {
 
               body: JSON.stringify({
 
-                email,
+                email: identifier,
 
                 password
               })
@@ -113,10 +133,7 @@ function LoginPage() {
           );
 
         } else {
-
-          alert(
-            data.message
-          );
+          setError(data.message);
         }
 
       } catch (error) {
@@ -130,97 +147,72 @@ function LoginPage() {
     };
 
   return (
-    <div
-      style={{
-        display: 'flex',
+    <div className="auth-shell">
+      <form onSubmit={handleLogin} className="auth-panel">
 
-        justifyContent: 'center',
-
-        alignItems: 'center',
-
-        height: '100vh',
-
-        background: '#f5f5f5'
-      }}
-    >
-      <form
-
-        onSubmit={
-          handleLogin
-        }
-
-        style={{
-          background: 'white',
-
-          padding: '40px',
-
-          borderRadius: '10px',
-
-          width: '300px'
-        }}
-      >
         <h2>
           Login
         </h2>
 
         <input
-
-          type="email"
-
-          placeholder="Email"
-
-          value={email}
-
-          onChange={(e) =>
-            setEmail(
-              e.target.value
-            )
-          }
-
-          style={{
-            width: '100%',
-
-            padding: '10px',
-
-            marginBottom: '15px'
+          type="text"
+          placeholder="Email or username"
+          value={identifier}
+          onChange={(e) => {
+            setIdentifier(e.target.value);
+            setError('');
           }}
+          className="input-field"
+          style={{ marginBottom: '15px' }}
         />
 
         <input
-
           type="password"
-
           placeholder="Password"
-
           value={password}
-
-          onChange={(e) =>
-            setPassword(
-              e.target.value
-            )
-          }
-
-          style={{
-            width: '100%',
-
-            padding: '10px',
-
-            marginBottom: '15px'
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setError('');
           }}
+          className="input-field"
+          style={{ marginBottom: '15px' }}
         />
 
-        <button
+        {error && (
+          <div style={{ color: '#E65F2B', marginBottom: '15px' }}>
+            {error}
+          </div>
+        )}
 
-          type="submit"
 
-          style={{
-            width: '100%',
-
-            padding: '10px'
-          }}
-        >
+        <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
           Login
         </button>
+
+        <div
+          style={{
+            marginTop: '15px',
+            textAlign: 'center'
+          }}
+        >
+          <span
+            style={{
+              color: '#6b7280'
+            }}
+          >
+            No account?
+          </span>
+
+          {' '}
+
+          <button
+            type="button"
+            onClick={() => navigate('/register')}
+            className="btn btn-ghost"
+          >
+            Register
+          </button>
+        </div>
       </form>
     </div>
   );
@@ -229,12 +221,16 @@ function LoginPage() {
 function App() {
 
   return (
-    <BrowserRouter>
+    <LanguageProvider>
+      <BrowserRouter>
 
-      <Routes>
-
+        <Routes>
         <Route
           path="/"
+          element={<LandingPage />}
+        />
+        <Route
+          path="/login"
 
           element={
             <LoginPage />
@@ -301,6 +297,29 @@ function App() {
           />
 
           <Route
+            path="/forum"
+
+            element={
+              <Forum />
+            }
+          />
+
+          <Route
+            path="/forum/:id"
+
+            element={
+              <ForumThread />
+            }
+          />
+
+          <Route
+            path="/favorites/:type"
+            element={
+              <Favorites />
+            }
+          />
+
+          <Route
             path="/settings"
 
             element={
@@ -326,22 +345,27 @@ function App() {
           />
 
         </Route>
+        <Route
+          path="/profile"
+          element={<Profile />}
+        />
 
         <Route
-  path="/users"
-  element={<Users />}
-/>
+          path="/profile/:userId"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
 
-<Route
-  path="/profile/:userId"
-  element={<UserProfile />}
-/>
 
       </Routes>
 
       <Toaster />
 
     </BrowserRouter>
+    </LanguageProvider>
   );
 }
 

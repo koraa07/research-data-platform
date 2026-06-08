@@ -49,16 +49,29 @@ function Datasets() {
       }
     };
 
+  const handleSearch =
+    (value) => {
+      setSearch(value);
+    };
+
   const filteredDatasets =
     datasets.filter(
       (dataset) => {
 
+        const searchLower =
+          search.toLowerCase();
+
         const matchesSearch =
+          !searchLower ||
           dataset.title
             .toLowerCase()
-            .includes(
-              search.toLowerCase()
-            );
+            .includes(searchLower) ||
+          dataset.description
+            .toLowerCase()
+            .includes(searchLower) ||
+          dataset.filename
+            .toLowerCase()
+            .includes(searchLower);
 
         const matchesCategory =
           category === '' ||
@@ -80,60 +93,24 @@ function Datasets() {
     )];
 
   return (
-    <div
-      style={{
-        padding: '40px'
-      }}
-    >
-      <h1>
-        Research Datasets
-      </h1>
+    <div className="page-content">
+      <h1 className="page-title">Research Datasets</h1>
 
-      <div
-        style={{
-          display: 'flex',
-
-          gap: '20px',
-
-          marginTop: '20px',
-
-          marginBottom: '30px'
-        }}
-      >
+      <div className="filter-row">
         <input
-
           type="text"
-
           placeholder="Search datasets..."
-
           value={search}
-
-          onChange={(e) =>
-            setSearch(
-              e.target.value
-            )
-          }
-
-          style={{
-            padding: '10px',
-
-            width: '300px'
-          }}
+          onChange={(e) => handleSearch(e.target.value)}
+          className="input-field"
+          style={{ maxWidth: '300px' }}
         />
 
         <select
-
           value={category}
-
-          onChange={(e) =>
-            setCategory(
-              e.target.value
-            )
-          }
-
-          style={{
-            padding: '10px'
-          }}
+          onChange={(e) => setCategory(e.target.value)}
+          className="select-field"
+          style={{ maxWidth: '220px' }}
         >
           <option value="">
             All Categories
@@ -155,85 +132,31 @@ function Datasets() {
         </select>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
+      {filteredDatasets.length === 0 ? (
+        <div className="text-muted">No datasets found.</div>
+      ) : (
+        <div className="section-grid">
+          {filteredDatasets.map((dataset) => (
+            <Link key={dataset.id} to={'/datasets/' + dataset.id} className="result-link">
+              <div className="card dataset-card">
+                <div className="dataset-card-header">
+                  <h2 className="card-title">{dataset.title}</h2>
+                  <span className="dataset-badge">{dataset.category}</span>
+                </div>
 
-          gridTemplateColumns:
-            'repeat(auto-fill, minmax(300px, 1fr))',
-
-          gap: '20px'
-        }}
-      >
-        {filteredDatasets.map(
-          (dataset) => (
-
-            <Link
-
-              key={dataset.id}
-
-              to={`/datasets/${dataset.id}`}
-
-              style={{
-                textDecoration:
-                  'none',
-
-                color:
-                  'inherit'
-              }}
-            >
-              <div
-                style={{
-                  background:
-                    'white',
-
-                  padding:
-                    '20px',
-
-                  borderRadius:
-                    '10px',
-
-                  boxShadow:
-                    '0 2px 8px rgba(0,0,0,0.1)'
-                }}
-              >
-                <h2
-                  style={{
-                    color:
-                      '#2563eb'
-                  }}
-                >
-                  {dataset.title}
-                </h2>
-
-                <p>
+                <p className="dataset-description">
                   {dataset.description}
                 </p>
 
-                <p>
-                  <strong>
-                    Category:
-                  </strong>
-
-                  {' '}
-
-                  {dataset.category}
-                </p>
-
-                <p>
-                  <strong>
-                    File:
-                  </strong>
-
-                  {' '}
-
-                  {dataset.filename}
-                </p>
+                <div className="dataset-footer">
+                  <span>File: {dataset.filename}</span>
+                  <span>Author: {dataset.userName || 'Unknown'}</span>
+                </div>
               </div>
             </Link>
-          )
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

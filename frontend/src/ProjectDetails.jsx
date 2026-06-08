@@ -1,119 +1,114 @@
-import {
-  useEffect,
-  useState
-} from 'react';
-
-import {
-  useParams
-} from 'react-router-dom';
-
+import { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 function ProjectDetails() {
+  const { id } = useParams();
 
-  const { id } =
-    useParams();
-
-  const [datasets,
-    setDatasets] =
-      useState([]);
+  const [project, setProject] = useState(null);
+  const [datasets, setDatasets] = useState([]);
 
   useEffect(() => {
-
+    fetchProject();
     fetchDatasets();
+  }, [id]);
 
-  }, []);
+  const fetchProject = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/projects/${id}`
+      );
 
-  const fetchDatasets =
-    async () => {
+      setProject(response.data.project);
+    } catch (error) {
+      console.error(error);
+      toast.error('Project not found');
+    }
+  };
 
-      try {
+  const fetchDatasets = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/datasets/project/${id}`
+      );
 
-        const response =
-          await axios.get(
+      setDatasets(response.data.datasets);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-            `http://localhost:5000/api/datasets/project/${id}`
-          );
-
-        setDatasets(
-          response.data.datasets
-        );
-
-      } catch (error) {
-
-        console.error(error);
-      }
-    };
+  if (!project) {
+    return (
+      <h2 style={{ padding: '40px' }}>
+        Loading...
+      </h2>
+    );
+  }
 
   return (
-    <div
-      style={{
-        padding: '40px'
-      }}
-    >
-      <h1>
-        Project Datasets
-      </h1>
+    <div style={{ padding: '40px' }}>
+      <div
+        style={{
+          background: 'white',
+          padding: '30px',
+          borderRadius: '12px'
+        }}
+      >
+        <h1>{project.title}</h1>
+
+        <p
+          style={{
+            marginTop: '15px',
+            color: '#555'
+          }}
+        >
+          {project.description}
+        </p>
+      </div>
 
       <div
         style={{
-          display: 'grid',
-
-          gridTemplateColumns:
-            'repeat(auto-fill, minmax(300px, 1fr))',
-
-          gap: '20px',
-
-          marginTop: '30px'
+          marginTop: '40px'
         }}
       >
-        {datasets.map(
-          (dataset) => (
+        <h2>Datasets</h2>
 
+        {datasets.length === 0 ? (
+          <p>No datasets in this project</p>
+        ) : (
+          datasets.map((dataset) => (
             <div
-
               key={dataset.id}
-
               style={{
                 background: 'white',
-
                 padding: '20px',
-
-                borderRadius: '12px',
-
-                boxShadow:
-                  '0 2px 8px rgba(0,0,0,0.1)'
+                borderRadius: '10px',
+                marginTop: '15px'
               }}
             >
-              <h2>
+              <Link
+                to={`/datasets/${dataset.id}`}
+                style={{
+                  textDecoration: 'none',
+                  color: '#2563eb',
+                  fontSize: '18px',
+                  fontWeight: 'bold'
+                }}
+              >
                 {dataset.title}
-              </h2>
+              </Link>
 
-              <p>
+              <p
+                style={{
+                  marginTop: '10px'
+                }}
+              >
                 {dataset.description}
               </p>
-
-              <p>
-                <strong>
-                  Category:
-                </strong>
-
-                {' '}
-
-                {dataset.category}
-              </p>
-
-              <p>
-                <strong>
-                  File:
-                </strong>
-
-                {' '}
-
-                {dataset.filename}
-              </p>
             </div>
-          )
+          ))
         )}
       </div>
     </div>

@@ -43,6 +43,9 @@ const projectRoutes =
   const commentRoutes =
   require('./routes/commentRoutes');
 
+const forumRoutes =
+  require('./routes/forumRoutes');
+
   const userRoutes =
   require('./routes/userRoutes');
 
@@ -116,8 +119,18 @@ app.use(
 );
 
 app.use(
+  '/api/forum',
+  forumRoutes
+);
+
+app.use(
   '/api/users',
   userRoutes
+);
+
+app.use(
+  '/api/search',
+  require('./routes/searchRoutes')
 );
 
 const PORT =

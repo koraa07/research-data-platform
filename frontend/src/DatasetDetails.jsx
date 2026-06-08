@@ -5,7 +5,8 @@ import {
 
 import {
   useParams,
-  useNavigate
+  useNavigate,
+  Link
 } from 'react-router-dom';
 
 import axios from 'axios';
@@ -32,15 +33,44 @@ function DatasetDetails() {
     setCommentText] =
     useState('');
 
-    const [editingCommentId,
-  setEditingCommentId] =
-  useState(null);
+  const [editingCommentId,
+    setEditingCommentId] =
+    useState(null);
 
-const [editCommentText,
-  setEditCommentText] =
-  useState('');
+  const [editCommentText,
+    setEditCommentText] =
+    useState('');
+
+  const [isFavorite,
+    setIsFavorite] =
+    useState(false);
+
+  const [liked,
+    setLiked] =
+    useState(false);
 
   useEffect(() => {
+    const favorites =
+      JSON.parse(
+        localStorage.getItem(
+          'favoriteDatasets'
+        ) || '[]'
+      ).map(String);
+
+    setIsFavorite(
+      favorites.includes(id)
+    );
+
+    const likedList =
+      JSON.parse(
+        localStorage.getItem(
+          'likedDatasets'
+        ) || '[]'
+      );
+
+    setLiked(
+      likedList.includes(id)
+    );
 
     fetchDataset();
 
@@ -148,6 +178,90 @@ const [editCommentText,
       }
     };
 
+  const toggleFavorite = () => {
+    const storageKey = 'favoriteDatasets';
+    const current =
+      JSON.parse(
+        localStorage.getItem(
+          storageKey
+        ) || '[]'
+      );
+
+    const isNowFavorited =
+      !current.includes(id);
+
+    const updated =
+      isNowFavorited
+        ? [...current, id]
+        : current.filter((item) => item !== id);
+
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify(updated)
+    );
+    setIsFavorite(isNowFavorited);
+    toast.success(
+      isNowFavorited
+        ? 'Added to favorites'
+        : 'Removed from favorites'
+    );
+  };
+
+  const toggleLike =
+    async () => {
+      const user =
+        JSON.parse(
+          localStorage.getItem(
+            'user'
+          )
+        );
+
+      try {
+        await axios.put(
+          `http://localhost:5000/api/datasets/like/${id}`,
+          {
+            userId: user?.id
+          }
+        );
+
+        const storedLikes =
+          JSON.parse(
+            localStorage.getItem(
+              'likedDatasets'
+            ) || '[]'
+          );
+
+        const isNowLiked =
+          !storedLikes.includes(id);
+
+        const updatedLikes =
+          isNowLiked
+            ? [...storedLikes, id]
+            : storedLikes.filter(
+                (item) => item !== id
+              );
+
+        localStorage.setItem(
+          'likedDatasets',
+          JSON.stringify(updatedLikes)
+        );
+
+        setLiked(isNowLiked);
+        fetchDataset();
+        toast.success(
+          isNowLiked
+            ? 'Added like'
+            : 'Removed like'
+        );
+      } catch (error) {
+        alert(
+          error.response?.data?.message ||
+            'Like failed'
+        );
+        console.error(error);
+      }
+    };
+
     const saveComment =
   async (id) => {
 
@@ -246,363 +360,170 @@ const [editCommentText,
     };
 
   if (!dataset) {
-
     return (
-      <h2
-        style={{
-          padding: '40px'
-        }}
-      >
-        Loading...
-      </h2>
+      <div className="page-content">
+        <h2 className="page-title">Loading...</h2>
+      </div>
     );
   }
 
   return (
-    <div
-      style={{
-        padding: '40px'
-      }}
-    >
-      <h1>
-        {dataset.title}
-      </h1>
-
-      <div
-        style={{
-          background: 'white',
-          padding: '30px',
-          borderRadius: '12px',
-          marginTop: '20px'
-        }}
-      >
-        <p>
-          <strong>
-            Description:
-          </strong>{' '}
-          {dataset.description}
-        </p>
-
-        <p>
-          <strong>
-            Category:
-          </strong>{' '}
-          {dataset.category}
-        </p>
-
-        <p>
-  <strong>
-    Likes:
-  </strong>
-
-  {' '}
-
-  {dataset.likes || 0}
-</p>
-
-        <p>
-          <strong>
-            File:
-          </strong>{' '}
-          {dataset.filename}
-        </p>
-
-        <div
-          style={{
-            display: 'flex',
-            justifyContent:
-              'center',
-            marginTop: '20px'
-          }}
-        >
-          <a
-            href={
-              `http://localhost:5000/uploads/${dataset.filename}`
-            }
-            target="_blank"
-            rel="noreferrer"
-            style={{
-              padding:
-                '10px 15px',
-              background:
-                '#2563eb',
-              color:
-                'white',
-              textDecoration:
-                'none',
-              borderRadius:
-                '8px'
-            }}
-          >
-            Download File
-          </a>
+    <div className="page-content dataset-details-page">
+      <div className="detail-header">
+        <div>
+          <h1>{dataset.title}</h1>
+          <p className="text-muted">
+            Explore the dataset details, download the file, like it, and join the discussion.
+          </p>
         </div>
       </div>
 
-      <button
+      <div className="dataset-detail-card">
+        <div className="dataset-actions">
+          <button
+            type="button"
+            className={
+              'icon-btn heart' +
+              (liked ? ' active' : '')
+            }
+            onClick={toggleLike}
+          >
+            <span className="icon">
+              {liked ? '♥' : '♡'}
+            </span>
+            Like
+          </button>
+          <button
+            type="button"
+            className={
+              'icon-btn star' +
+              (isFavorite ? ' active' : '')
+            }
+            onClick={toggleFavorite}
+          >
+            <span className="icon">
+              {isFavorite ? '★' : '☆'}
+            </span>
+            Favorites
+          </button>
+        </div>
+        <div className="dataset-detail-summary">
+          <div>
+            <h2 className="card-title">Summary</h2>
+            <p>{dataset.description}</p>
+          </div>
+          <div className="dataset-info-list">
+            <div className="dataset-info-item">
+              <span>Category</span>
+              <strong>{dataset.category}</strong>
+            </div>
+            <div className="dataset-info-item">
+              <span>Likes</span>
+              <strong>{dataset.likes || 0}</strong>
+            </div>
+            <div className="dataset-info-item">
+              <span>File</span>
+              <strong>{dataset.filename}</strong>
+            </div>
+          </div>
+        </div>
 
-  onClick={async () => {
+        <a
+          href={`http://localhost:5000/uploads/${dataset.filename}`}
+          target="_blank"
+          rel="noreferrer"
+          className="btn btn-primary"
+          style={{ width: 'fit-content', marginTop: '20px' }}
+        >
+          Download File
+        </a>
+      </div>
 
-    try {
-
-      await axios.put(
-
-        `http://localhost:5000/api/datasets/like/${id}`
-      );
-
-      fetchDataset();
-
-    } catch (error) {
-
-      console.error(error);
-    }
-  }}
-
-  style={{
-    marginTop: '15px',
-
-    padding: '10px 15px',
-
-    background: '#e11d48',
-
-    color: 'white',
-
-    border: 'none',
-
-    borderRadius: '8px',
-
-    cursor: 'pointer'
-  }}
->
-  ❤️ Like
-</button>
-
-      <div
-        style={{
-          background: 'white',
-          padding: '25px',
-          borderRadius: '12px',
-          marginTop: '30px'
-        }}
-      >
-        <h2>
-          Comments
-        </h2>
+      <div className="comment-panel">
+        <div className="comment-panel-header">
+          <h2>Comments</h2>
+          <button type="button" className="btn btn-secondary" onClick={addComment}>
+            Add comment
+          </button>
+        </div>
 
         <textarea
           value={commentText}
-          onChange={(e) =>
-            setCommentText(
-              e.target.value
-            )
-          }
+          onChange={(e) => setCommentText(e.target.value)}
           placeholder="Write a comment..."
-          style={{
-            width: '100%',
-            minHeight: '100px',
-            padding: '10px',
-            marginTop: '15px'
-          }}
+          className="textarea-field"
         />
 
-        <button
-          onClick={addComment}
-          style={{
-            marginTop: '10px',
-            padding:
-              '10px 15px',
-            background:
-              '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius:
-              '8px',
-            cursor: 'pointer'
-          }}
-        >
-          Add Comment
-        </button>
+        <div className="comments-list">
+          {comments.map((comment) => (
+            <div key={comment.id} className="comment-card">
+              <div className="comment-card-header">
+                <Link to={`/profile/${comment.userId}`} className="comment-author">
+                  <div className="comment-avatar">
+                    {comment.userName?.[0]?.toUpperCase()}
+                  </div>
+                  <div>
+                    <strong>{comment.userName}</strong>
+                    <div className="comment-meta">{new Date(comment.createdAt).toLocaleString()}</div>
+                  </div>
+                </Link>
+                {comment.userId === JSON.parse(localStorage.getItem('user'))?.id && (
+                  <div className="comment-actions">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        setEditingCommentId(comment.id);
+                        setEditCommentText(comment.text);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-danger"
+                      onClick={() => deleteComment(comment.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
 
-        <div
-          style={{
-            marginTop: '30px'
-          }}
-        >
-  {comments.map(
-  (comment) => (
-
-    <div
-      key={comment.id}
-      style={{
-        borderBottom:
-          '1px solid #ddd',
-        padding:
-          '15px 0'
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          justifyContent:
-            'space-between'
-        }}
-      >
-        <strong>
-          {comment.userName}
-        </strong>
-
-        {comment.userId ===
-          JSON.parse(
-            localStorage.getItem(
-              'user'
-            )
-          )?.id && (
-
-          <div
-            style={{
-              display: 'flex',
-              gap: '10px'
-            }}
-          >
-            <button
-
-              onClick={() => {
-
-                setEditingCommentId(
-                  comment.id
-                );
-
-                setEditCommentText(
-                  comment.text
-                );
-              }}
-
-              style={{
-                background:
-                  '#2563eb',
-                color:
-                  'white',
-                border:
-                  'none',
-                borderRadius:
-                  '6px',
-                cursor:
-                  'pointer'
-              }}
-            >
-              Edit
-            </button>
-
-            <button
-
-              onClick={() =>
-                deleteComment(
-                  comment.id
-                )
-              }
-
-              style={{
-                background:
-                  '#dc2626',
-                color:
-                  'white',
-                border:
-                  'none',
-                borderRadius:
-                  '6px',
-                cursor:
-                  'pointer'
-              }}
-            >
-              Delete
-            </button>
-          </div>
-        )}
-      </div>
-
-      {editingCommentId ===
-      comment.id ? (
-
-        <>
-          <textarea
-
-            value={
-              editCommentText
-            }
-
-            onChange={(e) =>
-              setEditCommentText(
-                e.target.value
-              )
-            }
-
-            style={{
-              width: '100%',
-              marginTop: '10px',
-              padding: '10px'
-            }}
-          />
-
-          <div
-            style={{
-              marginTop: '10px',
-              display: 'flex',
-              gap: '10px'
-            }}
-          >
-            <button
-
-              onClick={() =>
-                saveComment(
-                  comment.id
-                )
-              }
-            >
-              Save
-            </button>
-
-            <button
-
-              onClick={() =>
-                setEditingCommentId(
-                  null
-                )
-              }
-            >
-              Cancel
-            </button>
-          </div>
-        </>
-
-      ) : (
-
-    <div
-  style={{
-    marginTop: '8px'
-  }}
->
-  <p>
-    {comment.text}
-  </p>
-
-  <small
-    style={{
-      color: '#666'
-    }}
-  >
-    {new Date(
-      comment.createdAt
-    ).toLocaleString()}
-  </small>
-</div>
-      )}
-    </div>
-  )
-)}
+              {editingCommentId === comment.id ? (
+                <div className="comment-editing-row">
+                  <textarea
+                    value={editCommentText}
+                    onChange={(e) => setEditCommentText(e.target.value)}
+                    className="textarea-field"
+                  />
+                  <div className="comment-edit-controls">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => saveComment(comment.id)}
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-ghost"
+                      onClick={() => setEditingCommentId(null)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="comment-text">{comment.text}</p>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
 }
+
 
 export default DatasetDetails;

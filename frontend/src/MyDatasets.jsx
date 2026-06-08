@@ -3,6 +3,8 @@ import {
   useState
 } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import axios from 'axios';
 
 function MyDatasets() {
@@ -143,205 +145,137 @@ function MyDatasets() {
     };
 
   return (
-    <div
-      style={{
-        padding: '40px'
-      }}
-    >
-      <h1>
-        My Datasets
-      </h1>
+    <div className="page-content">
+      <div className="section-header" style={{ marginBottom: '24px' }}>
+        <div>
+          <h1>My Datasets</h1>
+          <p className="text-muted">
+            Manage your datasets and quickly add new research assets.
+          </p>
+        </div>
+        {datasets.length > 0 && (
+          <Link to="/uploads" className="btn btn-primary">
+            Upload dataset
+          </Link>
+        )}
+      </div>
 
-      <div
-        style={{
-          display: 'grid',
-
-          gridTemplateColumns:
-            'repeat(auto-fill, minmax(300px, 1fr))',
-
-          gap: '20px',
-
-          marginTop: '30px'
-        }}
-      >
-        {datasets.map(
-          (dataset) => (
-
-          <div
-            key={dataset.id}
-
-            style={{
-              background: 'white',
-
-              padding: '20px',
-
-              borderRadius: '10px',
-
-              boxShadow:
-                '0 2px 8px rgba(0,0,0,0.1)'
-            }}
-          >
-            <h2>
-              {dataset.title}
-            </h2>
-
-            <p>
-              {dataset.description}
-            </p>
-
-            <p>
-              <strong>
-                Category:
-              </strong>
-
-              {' '}
-
-              {dataset.category}
-            </p>
-
-            <p>
-              <strong>
-                File:
-              </strong>
-
-              {' '}
-
-              {dataset.filename}
-            </p>
-
-            <button
-
-              onClick={() =>
-                handleDelete(
-                  dataset.id
-                )
-              }
-
+      {datasets.length === 0 ? (
+        <div className="empty-state-card">
+          <h2>Upload your first dataset</h2>
+          <p>
+            You don’t have any datasets yet. Add your first one to organize projects, categories,
+            and files in your research workspace.
+          </p>
+          <Link to="/uploads" className="btn btn-primary">
+            Upload dataset
+          </Link>
+        </div>
+      ) : (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns:
+              'repeat(auto-fill, minmax(300px, 1fr))',
+            gap: '20px',
+            marginTop: '30px'
+          }}
+        >
+          {datasets.map((dataset) => (
+            <div
+              key={dataset.id}
               style={{
-                marginTop: '15px',
-
-                padding: '10px',
-
-                background: '#dc2626',
-
-                color: 'white',
-
-                border: 'none',
-
-                borderRadius: '8px',
-
-                cursor: 'pointer'
+                background: 'white',
+                padding: '20px',
+                borderRadius: '10px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
               }}
             >
-              Delete
-            </button>
+              <h2>{dataset.title}</h2>
 
-            <button
+              <p>{dataset.description}</p>
 
-              onClick={() =>
-                handleEdit(dataset)
-              }
+              <p>
+                <strong>Category:</strong> {dataset.category}
+              </p>
 
-              style={{
-                marginTop: '10px',
+              <p>
+                <strong>File:</strong> {dataset.filename}
+              </p>
 
-                marginLeft: '10px',
-
-                padding: '10px',
-
-                background: '#2563eb',
-
-                color: 'white',
-
-                border: 'none',
-
-                borderRadius: '8px',
-
-                cursor: 'pointer'
-              }}
-            >
-              Edit
-            </button>
-
-            {editingId === dataset.id && (
-
-              <div
-                style={{
-                  marginTop: '20px',
-
-                  display: 'flex',
-
-                  flexDirection: 'column',
-
-                  gap: '10px'
-                }}
-              >
-                <input
-
-                  value={editTitle}
-
-                  onChange={(e) =>
-                    setEditTitle(
-                      e.target.value
-                    )
-                  }
-
-                  placeholder="Title"
-                />
-
-                <textarea
-
-                  value={editDescription}
-
-                  onChange={(e) =>
-                    setEditDescription(
-                      e.target.value
-                    )
-                  }
-
-                  placeholder="Description"
-                />
-
-                <input
-
-                  value={editCategory}
-
-                  onChange={(e) =>
-                    setEditCategory(
-                      e.target.value
-                    )
-                  }
-
-                  placeholder="Category"
-                />
-
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '15px' }}>
                 <button
-
-                  onClick={() =>
-                    handleSave(
-                      dataset.id
-                    )
-                  }
-
+                  onClick={() => handleDelete(dataset.id)}
                   style={{
                     padding: '10px',
-
-                    background: 'green',
-
+                    background: '#dc2626',
                     color: 'white',
-
                     border: 'none',
-
-                    borderRadius: '8px'
+                    borderRadius: '8px',
+                    cursor: 'pointer'
                   }}
                 >
-                  Save
+                  Delete
+                </button>
+
+                <button
+                  onClick={() => handleEdit(dataset)}
+                  style={{
+                    padding: '10px',
+                    background: '#2563eb',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Edit
                 </button>
               </div>
-            )}
-          </div>
-        ))}
-      </div>
+
+              {editingId === dataset.id && (
+                <div
+                  style={{
+                    marginTop: '20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px'
+                  }}
+                >
+                  <input
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    placeholder="Title"
+                    className="input-field"
+                  />
+
+                  <textarea
+                    value={editDescription}
+                    onChange={(e) => setEditDescription(e.target.value)}
+                    placeholder="Description"
+                    className="input-field"
+                  />
+
+                  <input
+                    value={editCategory}
+                    onChange={(e) => setEditCategory(e.target.value)}
+                    placeholder="Category"
+                    className="input-field"
+                  />
+
+                  <button
+                    onClick={() => handleSave(dataset.id)}
+                    className="btn btn-primary"
+                    style={{ width: 'fit-content' }}
+                  >
+                    Save
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

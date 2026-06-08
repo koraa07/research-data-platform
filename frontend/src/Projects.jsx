@@ -39,9 +39,24 @@ function Projects() {
     setEditDescription] =
       useState('');
 
+  const [favoriteProjects,
+    setFavoriteProjects] =
+      useState([]);
+
   useEffect(() => {
 
     fetchProjects();
+
+    const storedFavorites =
+      JSON.parse(
+        localStorage.getItem(
+          'favoriteProjects'
+        ) || '[]'
+      ).map(String);
+
+    setFavoriteProjects(
+      storedFavorites
+    );
 
   }, []);
 
@@ -184,7 +199,37 @@ function Projects() {
     }
   };
 
- const deleteProject =
+const toggleProjectFavorite =
+    (projectId) => {
+      const storedFavorites =
+        JSON.parse(
+          localStorage.getItem(
+            'favoriteProjects'
+          ) || '[]'
+        ).map(String);
+
+      const stringId = String(projectId);
+
+      const isFavorited =
+        storedFavorites.includes(
+          stringId
+        );
+
+      const updatedList =
+        isFavorited
+          ? storedFavorites.filter(
+              (item) => item !== stringId
+            )
+          : [...storedFavorites, stringId];
+
+      localStorage.setItem(
+        'favoriteProjects',
+        JSON.stringify(updatedList)
+      );
+      setFavoriteProjects(updatedList);
+    };
+
+  const deleteProject =
   async (id) => {
 
     try {
@@ -224,205 +269,68 @@ function Projects() {
     }
   };
   return (
-    <div
-      style={{
-        padding: '40px'
-      }}
-    >
-      <h1>
-        Projects
-      </h1>
+    <div className="page-content">
+      <h1 className="page-title">Projects</h1>
 
-      <div
-        style={{
-          background: 'white',
+      <div className="form-card" style={{ maxWidth: '520px', marginTop: '20px' }}>
 
-          padding: '20px',
-
-          borderRadius: '12px',
-
-          marginTop: '20px',
-
-          maxWidth: '500px',
-
-          display: 'flex',
-
-          flexDirection: 'column',
-
-          gap: '15px'
-        }}
-      >
         <input
-
           value={title}
-
-          onChange={(e) =>
-            setTitle(
-              e.target.value
-            )
-          }
-
+          onChange={(e) => setTitle(e.target.value)}
           placeholder="Project title"
-
-          style={{
-            padding: '12px'
-          }}
+          className="input-field"
         />
 
         <textarea
-
           value={description}
-
-          onChange={(e) =>
-            setDescription(
-              e.target.value
-            )
-          }
-
+          onChange={(e) => setDescription(e.target.value)}
           placeholder="Description"
-
-          style={{
-            padding: '12px'
-          }}
+          className="input-field"
+          rows={4}
         />
 
-        <button
-
-          onClick={
-            createProject
-          }
-
-          style={{
-            padding: '12px',
-
-            background:
-              '#2563eb',
-
-            color:
-              'white',
-
-            border:
-              'none',
-
-            borderRadius:
-              '8px',
-
-            cursor:
-              'pointer'
-          }}
-        >
+        <button onClick={createProject} className="btn btn-primary">
           Create Project
         </button>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
+      <div className="section-grid" style={{ marginTop: '40px' }}>
 
-          gridTemplateColumns:
-            'repeat(auto-fill, minmax(300px, 1fr))',
-
-          gap: '20px',
-
-          marginTop: '40px'
-        }}
-      >
         {projects.map(
           (project) => (
 
-            <div
+            <div key={project.id} className="card">
 
-              key={project.id}
-
-              style={{
-                background:
-                  'white',
-
-                padding:
-                  '20px',
-
-                borderRadius:
-                  '12px',
-
-                boxShadow:
-                  '0 2px 8px rgba(0,0,0,0.1)'
-              }}
-            >
               {editingId ===
               project.id ? (
 
                 <>
                   <input
-
-                    value={
-                      editTitle
-                    }
-
-                    onChange={(e) =>
-                      setEditTitle(
-                        e.target.value
-                      )
-                    }
-
-                    style={{
-                      width:
-                        '100%',
-
-                      padding:
-                        '10px'
-                    }}
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    className="input-field"
                   />
 
                   <textarea
-
-                    value={
-                      editDescription
-                    }
-
-                    onChange={(e) =>
-                      setEditDescription(
-                        e.target.value
-                      )
-                    }
-
-                    style={{
-                      width:
-                        '100%',
-
-                      padding:
-                        '10px',
-
-                      marginTop:
-                        '10px'
-                    }}
+                    value={editDescription}
+                    onChange={(e) => setEditDescription(e.target.value)}
+                    className="input-field"
+                    rows={4}
+                    style={{ marginTop: '10px' }}
                   />
 
                   <button
-
-                    onClick={() =>
-                      saveProject(
-                        project.id
-                      )
-                    }
-
-                    style={{
-                      marginTop:
-                        '10px',
-
-                      marginRight:
-                        '10px'
-                    }}
+                    onClick={() => saveProject(project.id)}
+                    className="btn btn-primary"
+                    style={{ marginTop: '10px', marginRight: '10px' }}
                   >
                     Save
                   </button>
 
                   <button
-
-                    onClick={() =>
-                      setEditingId(
-                        null
-                      )
-                    }
+                    onClick={() => setEditingId(null)}
+                    className="btn btn-ghost"
+                    style={{ marginTop: '10px' }}
                   >
                     Cancel
                   </button>
@@ -431,21 +339,8 @@ function Projects() {
               ) : (
 
                 <>
-                  <Link
-
-                    to={`/projects/${project.id}`}
-
-                    style={{
-                      textDecoration:
-                        'none',
-
-                      color:
-                        '#2563eb'
-                    }}
-                  >
-                    <h2>
-                      {project.title}
-                    </h2>
+                  <Link to={`/projects/${project.id}`} className="result-link">
+                    <h2 className="card-title">{project.title}</h2>
                   </Link>
 
                   <p>
@@ -453,81 +348,44 @@ function Projects() {
                   </p>
 
                   <button
-
-                    onClick={() => {
-
-                      setEditingId(
+                    type="button"
+                    className={
+                      'icon-btn star' +
+                      (favoriteProjects.includes(String(project.id))
+                        ? ' active'
+                        : '')
+                    }
+                    onClick={() =>
+                      toggleProjectFavorite(
                         project.id
-                      );
+                      )
+                    }
+                    style={{ marginTop: '15px', marginRight: '10px' }}
+                  >
+                    <span className="icon">
+                      {favoriteProjects.includes(String(project.id))
+                        ? '★'
+                        : '☆'}
+                    </span>
+                    Favorite
+                  </button>
 
-                      setEditTitle(
-                        project.title
-                      );
-
-                      setEditDescription(
-                        project.description
-                      );
+                  <button
+                    onClick={() => {
+                      setEditingId(project.id);
+                      setEditTitle(project.title);
+                      setEditDescription(project.description);
                     }}
-
-                    style={{
-                      marginTop:
-                        '15px',
-
-                      marginRight:
-                        '10px',
-
-                      padding:
-                        '10px',
-
-                      background:
-                        '#2563eb',
-
-                      color:
-                        'white',
-
-                      border:
-                        'none',
-
-                      borderRadius:
-                        '8px',
-
-                      cursor:
-                        'pointer'
-                    }}
+                    className="btn btn-secondary"
+                    style={{ marginTop: '15px', marginRight: '10px' }}
                   >
                     Edit
                   </button>
 
                   <button
-
-                    onClick={() =>
-                      deleteProject(
-                        project.id
-                      )
-                    }
-
-                    style={{
-                      marginTop:
-                        '15px',
-
-                      padding:
-                        '10px',
-
-                      background:
-                        '#dc2626',
-
-                      color:
-                        'white',
-
-                      border:
-                        'none',
-
-                      borderRadius:
-                        '8px',
-
-                      cursor:
-                        'pointer'
-                    }}
+                    onClick={() => deleteProject(project.id)}
+                    className="btn btn-danger"
+                    style={{ marginTop: '15px' }}
                   >
                     Delete
                   </button>

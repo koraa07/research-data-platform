@@ -12,185 +12,120 @@ import axios from 'axios';
 
 function UserProfile() {
 
-  const { userId } =
-    useParams();
+  const { userId } = useParams();
 
-  const [user,
-    setUser] =
-      useState(null);
-
-  const [projects,
-    setProjects] =
-      useState([]);
-
-  const [datasets,
-    setDatasets] =
-      useState([]);
+  const [user, setUser] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [datasets, setDatasets] = useState([]);
 
   useEffect(() => {
-
     fetchUser();
-
     fetchProjects();
-
     fetchDatasets();
-
   }, [userId]);
 
-  const fetchUser =
-    async () => {
+  const fetchUser = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/users/${userId}`
+      );
+      setUser(res.data.user);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-      try {
+  const fetchProjects = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/projects/user/${userId}`
+      );
+      setProjects(res.data.projects);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-        const response =
-          await axios.get(
-
-            `http://localhost:5000/api/users/${userId}`
-          );
-
-        setUser(
-          response.data.user
-        );
-
-      } catch (error) {
-
-        console.error(error);
-      }
-    };
-
-  const fetchProjects =
-    async () => {
-
-      try {
-
-        const response =
-          await axios.get(
-
-            `http://localhost:5000/api/projects/user/${userId}`
-          );
-
-        setProjects(
-          response.data.projects
-        );
-
-      } catch (error) {
-
-        console.error(error);
-      }
-    };
-
-  const fetchDatasets =
-    async () => {
-
-      try {
-
-        const response =
-          await axios.get(
-
-            `http://localhost:5000/api/datasets/user/${userId}`
-          );
-
-        setDatasets(
-          response.data.datasets
-        );
-
-      } catch (error) {
-
-        console.error(error);
-      }
-    };
+  const fetchDatasets = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/datasets/user/${userId}`
+      );
+      setDatasets(res.data.datasets);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (!user) {
-
     return (
-      <h2
-        style={{
-          padding: '40px'
-        }}
-      >
-        Loading...
-      </h2>
+      <div className="page-content">
+        <h1 className="page-title">Loading user profile...</h1>
+      </div>
     );
   }
-console.log(projects)
+
   return (
-    <div
-      style={{
-        padding: '40px'
-      }}
-    >
-      <h1>
-        {user.name}
-      </h1>
+    <div className="page-content profile-page">
+      <h1 className="page-title">{user.name}</h1>
 
-      <p>
-        {user.email}
-      </p>
-
-      <h2
-        style={{
-          marginTop: '40px'
-        }}
-      >
-        Projects
-      </h2>
-
-      {projects.map(
-        (project) => (
-
-          <div
-            key={project.id}
-            style={{
-              background:
-                'white',
-              padding:
-                '15px',
-              marginTop:
-                '10px',
-              borderRadius:
-                '10px'
-            }}
-          >
-            <Link
-              to={`/projects/${project.id}`}
-            >
-              {project.title}
-            </Link>
+      <div className="profile-header">
+        <div className="profile-banner">
+          <div className="profile-avatar">
+            {user.name?.[0]?.toUpperCase()}
           </div>
-        )
+          <h2>{user.name}</h2>
+          <p>{user.email}</p>
+        </div>
+
+        <div className="profile-metrics">
+          <div className="profile-stat-box">
+            <h3>Projects</h3>
+            <h1>{projects.length}</h1>
+          </div>
+          <div className="profile-stat-box">
+            <h3>Datasets</h3>
+            <h1>{datasets.length}</h1>
+          </div>
+        </div>
+      </div>
+
+      <div className="section-title">Projects</div>
+      {projects.length === 0 ? (
+        <div className="empty-state-card">
+          <h2>No projects yet</h2>
+          <p>This user has not shared any projects yet.</p>
+        </div>
+      ) : (
+        <div className="section-grid">
+          {projects.map((project) => (
+            <Link key={project.id} to={`/projects/${project.id}`} className="result-link">
+              <div className="card">
+                <h2 className="card-title">{project.title}</h2>
+                <p>{project.description}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
       )}
 
-      <h2
-        style={{
-          marginTop: '40px'
-        }}
-      >
-        Datasets
-      </h2>
-
-      {datasets.map(
-        (dataset) => (
-
-          <div
-            key={dataset.id}
-            style={{
-              background:
-                'white',
-              padding:
-                '15px',
-              marginTop:
-                '10px',
-              borderRadius:
-                '10px'
-            }}
-          >
-            <Link
-              to={`/datasets/${dataset.id}`}
-            >
-              {dataset.title}
+      <div className="section-title">Datasets</div>
+      {datasets.length === 0 ? (
+        <div className="empty-state-card">
+          <h2>No datasets yet</h2>
+          <p>This user has not uploaded any datasets yet.</p>
+        </div>
+      ) : (
+        <div className="section-grid">
+          {datasets.map((dataset) => (
+            <Link key={dataset.id} to={`/datasets/${dataset.id}`} className="result-link">
+              <div className="card">
+                <h2 className="card-title">{dataset.title}</h2>
+                <p>{dataset.description}</p>
+              </div>
             </Link>
-          </div>
-        )
+          ))}
+        </div>
       )}
     </div>
   );

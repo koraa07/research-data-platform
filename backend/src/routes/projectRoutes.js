@@ -76,6 +76,42 @@ router.get(
   }
 );
 
+router.get(
+  '/:id',
+
+  async (req, res) => {
+
+    try {
+
+      const project =
+        await Project.findByPk(
+          req.params.id
+        );
+
+      if (!project) {
+
+        return res.status(404).json({
+          success: false,
+          message: 'Project not found'
+        });
+      }
+
+      res.json({
+        success: true,
+        project
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        success: false
+      });
+    }
+  }
+);
+
 router.put(
   '/:id',
 

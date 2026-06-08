@@ -50,6 +50,11 @@ function Dashboard() {
     return <h1>Loading...</h1>;
   }
 
+  const user =
+  JSON.parse(
+    localStorage.getItem('user')
+  );
+
   const chartData = [
 
     {
@@ -75,40 +80,11 @@ function Dashboard() {
   ];
 
   return (
-    <div
-      style={{
-        padding: '40px',
+    <div className="page-content">
+      <h1 className="page-title">Analytics Dashboard</h1>
 
-        background: '#f5f7fb',
-
-        minHeight: '100vh'
-      }}
-    >
-      <h1>
-        Analytics Dashboard
-      </h1>
-
-      <div
-        style={{
-          display: 'grid',
-
-          gridTemplateColumns:
-            'repeat(auto-fit, minmax(250px, 1fr))',
-
-          gap: '20px',
-
-          marginTop: '30px'
-        }}
-      >
-        <div
-          style={{
-            background: 'white',
-
-            padding: '25px',
-
-            borderRadius: '12px'
-          }}
-        >
+      <div className="section-card-grid">
+        <div className="stat-card">
           <h2>
             Total Datasets
           </h2>
@@ -118,15 +94,7 @@ function Dashboard() {
           </h1>
         </div>
 
-        <div
-          style={{
-            background: 'white',
-
-            padding: '25px',
-
-            borderRadius: '12px'
-          }}
-        >
+        <div className="stat-card">
           <h2>
             Total Users
           </h2>
@@ -136,15 +104,7 @@ function Dashboard() {
           </h1>
         </div>
 
-        <div
-          style={{
-            background: 'white',
-
-            padding: '25px',
-
-            borderRadius: '12px'
-          }}
-        >
+        <div className="stat-card">
           <h2>
             Categories
           </h2>
@@ -155,19 +115,20 @@ function Dashboard() {
         </div>
       </div>
 
-      <div
-        style={{
-          background: 'white',
+      <div className="card">
+        <div className="welcome-card">
 
-          marginTop: '40px',
+  <h1 style={{ margin: 0 }}>
+    Welcome back,
+    {' '}
+    {user?.username}
+  </h1>
 
-          padding: '30px',
-
-          borderRadius: '12px',
-
-          height: '400px'
-        }}
-      >
+  <p>
+    Manage datasets, collaborate on projects
+    and explore research data.
+  </p>
+</div>
         <h2>
           Platform Statistics
         </h2>
@@ -190,17 +151,7 @@ function Dashboard() {
         </ResponsiveContainer>
       </div>
 
-      <div
-        style={{
-          background: 'white',
-
-          marginTop: '40px',
-
-          padding: '30px',
-
-          borderRadius: '12px'
-        }}
-      >
+      <div className="card">
         <h2>
           Recent Uploads
         </h2>
@@ -208,16 +159,7 @@ function Dashboard() {
         {stats.recentDatasets.map(
           (dataset) => (
 
-          <div
-            key={dataset.id}
-
-            style={{
-              padding: '15px 0',
-
-              borderBottom:
-                '1px solid #eee'
-            }}
-          >
+          <div key={dataset.id} className="recent-item">
             <h3>
               {dataset.title}
             </h3>

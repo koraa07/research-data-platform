@@ -3,6 +3,7 @@ import {
   useEffect
 } from 'react';
 
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 
@@ -10,6 +11,10 @@ function Uploads() {
 
   const [file, setFile] =
     useState(null);
+
+  const [uploadSuccess,
+    setUploadSuccess] =
+      useState(false);
 
   const [title, setTitle] =
     useState('');
@@ -130,18 +135,11 @@ function Uploads() {
           response.data
         );
 
-        alert(
-          'Dataset uploaded'
-        );
-
+        setUploadSuccess(true);
         setTitle('');
-
         setDescription('');
-
         setCategory('');
-
         setProjectId('');
-
         setFile(null);
 
       } catch (error) {
@@ -155,134 +153,115 @@ function Uploads() {
     };
 
   return (
-    <div
-      style={{
-        padding: '40px'
-      }}
-    >
-      <h1>
-        Upload Dataset
-      </h1>
+    <div className="page-content upload-page">
+      <div className="upload-header">
+        <div>
+          <h1>Upload Dataset</h1>
+          <p className="text-muted">
+            Add a dataset, tag it with category and project, and keep your research files organized.
+          </p>
+        </div>
+        <div className="upload-summary">
+          <div>
+            <strong>Hint</strong>
+            <p>Use a clear title, short description and choose the correct project.</p>
+          </div>
+        </div>
+      </div>
 
-      <div
-        style={{
-          marginTop: '30px',
+      <div className="upload-shell">
+        <div className="upload-card form-card">
+          <label className="full-width">
+            Dataset title
+            <input
+              type="text"
+              placeholder="Dataset title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="input-field"
+            />
+          </label>
 
-          display: 'flex',
+          <label className="full-width">
+            Description
+            <textarea
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="input-field"
+              style={{ minHeight: '140px' }}
+            />
+          </label>
 
-          flexDirection:
-            'column',
+          <div className="upload-grid">
+            <label>
+              Category
+              <input
+                type="text"
+                placeholder="Category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="input-field"
+              />
+            </label>
 
-          gap: '15px',
-
-          maxWidth:
-            '400px'
-        }}
-      >
-        <input
-
-          type="text"
-
-          placeholder="Dataset title"
-
-          value={title}
-
-          onChange={(e) =>
-            setTitle(
-              e.target.value
-            )
-          }
-        />
-
-        <textarea
-
-          placeholder="Description"
-
-          value={description}
-
-          onChange={(e) =>
-            setDescription(
-              e.target.value
-            )
-          }
-        />
-
-        <input
-
-          type="text"
-
-          placeholder="Category"
-
-          value={category}
-
-          onChange={(e) =>
-            setCategory(
-              e.target.value
-            )
-          }
-        />
-
-        <select
-
-          value={projectId}
-
-          onChange={(e) =>
-            setProjectId(
-              e.target.value
-            )
-          }
-
-          style={{
-            padding: '10px'
-          }}
-        >
-          <option value="">
-            No Project
-          </option>
-
-          {projects.map(
-            (project) => (
-
-              <option
-
-                key={project.id}
-
-                value={
-                  project.id
-                }
+            <label>
+              Project
+              <select
+                value={projectId}
+                onChange={(e) => setProjectId(e.target.value)}
+                className="input-field"
               >
-                {project.title}
-              </option>
-            )
+                <option value="">No project</option>
+                {projects.map((project) => (
+                  <option key={project.id} value={project.id}>
+                    {project.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <label className="file-drop-zone full-width">
+            <span className="file-label">Select dataset file</span>
+            <input
+              type="file"
+              onChange={(e) => setFile(e.target.files[0])}
+            />
+            {file && <div className="file-info">Selected: {file.name}</div>}
+          </label>
+
+          {uploadSuccess ? (
+            <div className="success-state-card">
+              <h2>Successfully uploaded!</h2>
+              <p>
+                Your dataset is now available in My Datasets. You can upload another dataset or return to review your collection.
+              </p>
+              <div className="success-actions">
+                <Link to="/my-datasets" className="btn btn-primary">
+                  Go back to My Datasets
+                </Link>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setUploadSuccess(false)}
+                >
+                  Upload another dataset
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={handleUpload}
+                className="btn btn-primary"
+                style={{ width: '100%' }}
+              >
+                Upload Dataset
+              </button>
+            </>
           )}
-        </select>
-
-        <input
-
-          type="file"
-
-          onChange={(e) =>
-            setFile(
-              e.target.files[0]
-            )
-          }
-        />
-
-        <button
-
-          onClick={
-            handleUpload
-          }
-
-          style={{
-            padding: '10px',
-
-            cursor:
-              'pointer'
-          }}
-        >
-          Upload Dataset
-        </button>
+        </div>
       </div>
     </div>
   );

@@ -251,48 +251,63 @@ router.delete(
   }
 );
 
-router.put(
-  '/like/:id',
+router.put('/like/:id', async (req, res) => {
+  try {
 
-  async (req, res) => {
+    const Dataset = require('../models/Dataset');
 
-    try {
+    const dataset = await Dataset.findByPk(req.params.id);
 
-      const dataset =
-        await Dataset.findByPk(
-          req.params.id
-        );
-
-      if (!dataset) {
-
-        return res.status(404).json({
-          success: false
-        });
-      }
-
-      await dataset.update({
-
-        likes:
-          dataset.likes + 1
-      });
-
-      res.json({
-
-        success: true,
-
-        likes:
-          dataset.likes
-      });
-
-    } catch (error) {
-
-      console.error(error);
-
-      res.status(500).json({
-        success: false
+    if (!dataset) {
+      return res.status(404).json({
+        success: false,
+        message: 'Dataset not found'
       });
     }
-  }
-);
 
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'userId missing'
+      });
+    }
+
+    // 🔥 ВРЕМЕННАЯ ЗАЩИТА ЧЕРЕЗ MEMORY (без JSON, без таблиц)
+    // храним лайки в памяти сервера (быстро для диплома)
+
+    if (!global.likedMap) {
+      global.likedMap = {};
+    }
+
+    const key = `${userId}_${dataset.id}`;
+
+    if (global.likedMap[key]) {
+      return res.status(400).json({
+        success: false,
+        message: 'Already liked'
+      });
+    }
+
+    global.likedMap[key] = true;
+
+    await dataset.update({
+      likes: dataset.likes + 1
+    });
+
+    return res.json({
+      success: true,
+      likes: dataset.likes + 1
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
 module.exports = router;

@@ -94,5 +94,60 @@ router.get(
   }
 );
 
+router.put(
+  '/:id',
+
+  async (req, res) => {
+
+    try {
+
+      const user =
+        await User.findByPk(
+          req.params.id
+        );
+
+      if (!user) {
+
+        return res.status(404).json({
+          success: false
+        });
+      }
+
+      await user.update({
+
+        name:
+          req.body.name,
+
+        bio:
+          req.body.bio,
+
+        avatar:
+          req.body.avatar,
+
+        github:
+          req.body.github,
+
+        website:
+          req.body.website
+      });
+
+      res.json({
+
+        success: true,
+
+        user
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        success: false
+      });
+    }
+  }
+);
+
 module.exports =
   router;
