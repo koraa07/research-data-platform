@@ -9,6 +9,8 @@ import {
 
 import axios from 'axios';
 
+import { useLanguage } from './LanguageContext';
+
 function Datasets() {
 
   const [datasets,
@@ -22,6 +24,8 @@ function Datasets() {
   const [category,
     setCategory] =
       useState('');
+
+      const { t } = useLanguage();
 
   useEffect(() => {
 

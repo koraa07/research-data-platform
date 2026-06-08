@@ -64,6 +64,47 @@ const messages = {
         project: 'Проект',
         dataset: 'Датасет',
       },
+      dashboard: {
+        title: 'Панель управления',
+        totalDatasets: 'Всего датасетов',
+        totalUsers: 'Всего пользователей',
+        totalCategories: 'Категории',
+        welcome: 'С возвращением',
+        description: 'Управляйте датасетами, работайте над проектами и исследуйте научные данные.',
+        statistics: 'Статистика платформы',
+        recentUploads: 'Последние загрузки',
+        loading: 'Загрузка...',
+        datasets: 'Датасеты',
+        users: 'Пользователи',
+        categories: 'Категории'
+      },
+
+      login: {
+        title: 'Вход',
+        identifier: 'Почта или имя пользователя',
+        password: 'Пароль',
+        button: 'Войти',
+        noAccount: 'Нет аккаунта?',
+        register: 'Регистрация'
+      },
+
+      register: {
+        title: 'Регистрация',
+        username: 'Имя пользователя',
+        email: 'Почта',
+        password: 'Пароль',
+        button: 'Создать аккаунт'
+      },
+
+      projects: {
+        title: 'Проекты',
+        noProjects: 'Проекты отсутствуют'
+      },
+
+      datasetsPage: {
+        title: 'Датасеты',
+        noDatasets: 'Датасеты отсутствуют'
+      },
       languageLabel: 'Язык',
     },
   },
@@ -130,6 +171,47 @@ const messages = {
         project: 'Project',
         dataset: 'Dataset',
       },
+      dashboard: {
+        title: 'Analytics Dashboard',
+        totalDatasets: 'Total Datasets',
+        totalUsers: 'Total Users',
+        totalCategories: 'Categories',
+        welcome: 'Welcome back',
+        description: 'Manage datasets, collaborate on projects and explore research data.',
+        statistics: 'Platform Statistics',
+        recentUploads: 'Recent Uploads',
+        loading: 'Loading...',
+        datasets: 'Datasets',
+        users: 'Users',
+        categories: 'Categories'
+      },
+
+      login: {
+        title: 'Login',
+        identifier: 'Email or username',
+        password: 'Password',
+        button: 'Login',
+        noAccount: 'No account?',
+        register: 'Register'
+      },
+
+      register: {
+        title: 'Register',
+        username: 'Username',
+        email: 'Email',
+        password: 'Password',
+        button: 'Create account'
+      },
+
+      projects: {
+        title: 'Projects',
+        noProjects: 'No projects found'
+      },
+
+      datasetsPage: {
+        title: 'Datasets',
+        noDatasets: 'No datasets found'
+      },
       languageLabel: 'Language',
     },
   },
@@ -137,7 +219,7 @@ const messages = {
 
 const LanguageContext = createContext({
   language: 'ru',
-  setLanguage: () => {},
+  setLanguage: () => { },
   t: messages.ru,
 });
 

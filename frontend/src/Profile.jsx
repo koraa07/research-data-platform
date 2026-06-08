@@ -4,47 +4,32 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from './LanguageContext';
 
 function Profile() {
+  const user = JSON.parse(localStorage.getItem('user'));
 
-  const user = JSON.parse(
-    localStorage.getItem('user')
-  );
-
-  const [datasets, setDatasets] =
-    useState([]);
-
-  const [projects, setProjects] =
-    useState([]);
+  const [datasets, setDatasets] = useState([]);
+  const [projects, setProjects] = useState([]);
 
   const { t } = useLanguage();
+
+  const API = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     load();
   }, []);
 
   const load = async () => {
-
     try {
-
-      const datasetsRes =
-        await axios.get(
-          `http://localhost:5000/api/datasets/user/${user.id}`
-        );
-
-      const projectsRes =
-        await axios.get(
-          `http://localhost:5000/api/projects/user/${user.id}`
-        );
-
-      setDatasets(
-        datasetsRes.data.datasets || []
+      const datasetsRes = await axios.get(
+        `${API}/api/datasets/user/${user.id}`
       );
 
-      setProjects(
-        projectsRes.data.projects || []
+      const projectsRes = await axios.get(
+        `${API}/api/projects/user/${user.id}`
       );
 
+      setDatasets(datasetsRes.data.datasets || []);
+      setProjects(projectsRes.data.projects || []);
     } catch (error) {
-
       console.error(error);
     }
   };
@@ -78,10 +63,12 @@ function Profile() {
               <span className="profile-banner-label">{t.email}</span>
               <strong>{user.email}</strong>
             </div>
+
             <div className="profile-banner-item">
               <span className="profile-banner-label">{t.datasets}</span>
               <strong>{datasets.length}</strong>
             </div>
+
             <div className="profile-banner-item">
               <span className="profile-banner-label">{t.projects}</span>
               <strong>{projects.length}</strong>
@@ -131,7 +118,11 @@ function Profile() {
       ) : (
         <div className="section-card-grid">
           {recentActivity.map((item) => (
-            <Link key={`${item.type}-${item.id}`} to={item.link} className="result-link">
+            <Link
+              key={`${item.type}-${item.id}`}
+              to={item.link}
+              className="result-link"
+            >
               <div className="card">
                 <h2 className="card-title">{item.title}</h2>
                 <p>{item.description}</p>
@@ -152,7 +143,11 @@ function Profile() {
       ) : (
         <div className="section-grid">
           {projects.slice(0, 3).map((project) => (
-            <Link key={project.id} to={`/projects/${project.id}`} className="result-link">
+            <Link
+              key={project.id}
+              to={`/projects/${project.id}`}
+              className="result-link"
+            >
               <div className="card">
                 <h3>{project.title}</h3>
                 <p>{project.description}</p>
@@ -178,7 +173,11 @@ function Profile() {
       ) : (
         <div className="section-grid">
           {datasets.slice(0, 3).map((dataset) => (
-            <Link key={dataset.id} to={`/datasets/${dataset.id}`} className="result-link">
+            <Link
+              key={dataset.id}
+              to={`/datasets/${dataset.id}`}
+              className="result-link"
+            >
               <div className="card">
                 <h3>{dataset.title}</h3>
                 <p>{dataset.description}</p>
