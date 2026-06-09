@@ -153,7 +153,7 @@ sequelize.authenticate()
     );
   });
 
-sequelize.sync({ alter: true })
+sequelize.sync()
 
   .then(() => {
 
