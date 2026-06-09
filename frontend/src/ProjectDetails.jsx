@@ -14,30 +14,34 @@ function ProjectDetails() {
     fetchDatasets();
   }, [id]);
 
-  const fetchProject = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/api/projects/${id}`
-      );
 
-      setProject(response.data.project);
-    } catch (error) {
-      console.error(error);
-      toast.error('Project not found');
-    }
-  };
 
-  const fetchDatasets = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/api/datasets/project/${id}`
-      );
+const API = import.meta.env.VITE_API_URL;
 
-      setDatasets(response.data.datasets);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+const fetchProject = async () => {
+  try {
+    const response = await axios.get(
+      `${API}/api/projects/${id}`
+    );
+
+    setProject(response.data.project);
+  } catch (error) {
+    console.error(error);
+    toast.error('Project not found');
+  }
+};
+
+const fetchDatasets = async () => {
+  try {
+    const response = await axios.get(
+      `${API}/api/datasets/project/${id}`
+    );
+
+    setDatasets(response.data.datasets);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   if (!project) {
     return (
